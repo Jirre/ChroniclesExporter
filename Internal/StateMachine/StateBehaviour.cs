@@ -1,0 +1,21 @@
+﻿using ChroniclesExporter.StateMachine;
+
+namespace ChroniclesExporter.Internal.StateMachine;
+
+public abstract class StateBehaviour<E>(E pId) : IState<E>
+    where E : Enum
+{
+    public E Id { get; } = pId;
+
+    public bool IsFistFrame { get; protected set; }
+
+    /// <inheritdoc/>
+    public abstract void Update();
+    /// <inheritdoc/>
+    public virtual void Activate() { }
+    /// <inheritdoc/>
+    public virtual void Deactivate()
+    {
+        IsFistFrame = true;
+    }
+}
