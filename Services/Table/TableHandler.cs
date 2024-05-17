@@ -10,6 +10,9 @@ public class TableHandler
     private readonly Dictionary<ETable, Dictionary<Guid, TableEntry>> _tableIndex =
         new Dictionary<ETable, Dictionary<Guid, TableEntry>>();
 
+    
+    public static bool TryGet(Guid pGuid, out ETable pTable) => 
+        INSTANCE._guidToTable.TryGetValue(pGuid, out pTable);
     public static bool TryGet(Guid pGuid, out TableEntry pEntry)
     {
         pEntry = null!;

@@ -26,6 +26,23 @@ public static partial class StringUtility
         return matches.Count > 0;
     }
 
+
+    [GeneratedRegex(@"\[(?<text>.+?)\]\s*:\s*(?<url>\S+)(?:\s+""(?<title>.+?)"")?", RegexOptions.Compiled)]
+    public static partial Regex MarkdownLinkRegex();
+    public static string MarkdownLinkToHtml(string pMarkdown)
+    {
+        Regex regex = MarkdownLinkRegex();
+        
+        return regex.Replace(pMarkdown, match =>
+        {
+            string text = match.Groups["text"].Value;
+            string url = match.Groups["url"].Value;
+            string title = match.Groups["title"].Captures.Count > 0 ? match.Groups["title"].Value : text;
+
+            return $"<a href=\"{url}\">{title}</a>";
+        });
+    }
+
     public static string TrimStart(this string pValue, string pSubstring)
     {
         return pValue.StartsWith(pSubstring) ? 

@@ -3,6 +3,7 @@
 public interface IState<E>
     where E : Enum
 {
+    StateMachine<E> StateMachine { get; }
     E Id { get; }
 
     /// <summary>

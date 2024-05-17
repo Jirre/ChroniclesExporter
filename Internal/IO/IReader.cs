@@ -1,4 +1,6 @@
-﻿namespace ChroniclesExporter.IO;
+﻿using ChroniclesExporter.Table;
+
+namespace ChroniclesExporter.IO;
 
 public interface IReader
 {
