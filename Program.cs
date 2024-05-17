@@ -1,9 +1,28 @@
-﻿namespace ChroniclesExporter;
+﻿using ChroniclesExporter.StateMachine;
+using ChroniclesExporter.States;
 
-class Program
+namespace ChroniclesExporter;
+
+public static class Program
 {
+    private static StateMachine<EProgramState> _stateMachine = new StateMachine<EProgramState>();
+    
     private static void Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
+        InitStateMachine();
+        _stateMachine.Goto(EProgramState.Init);
+
+        while (_stateMachine.IsRunning())
+        {
+            _stateMachine.Update();
+        }
+
+        Console.ReadKey();
+    }
+
+    private static void InitStateMachine()
+    {
+        _stateMachine.Add(new InitState(_stateMachine, EProgramState.Init));
+        _stateMachine.Add(new MySqlLoginState(_stateMachine, EProgramState.MySqlLogin));
     }
 }

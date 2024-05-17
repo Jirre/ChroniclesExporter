@@ -59,7 +59,7 @@ public class StateMachine<E>
     /// <summary>
     /// Adds a new state with the provided Id and Update Function as a new state to the state-machine
     /// </summary>
-    public void Add(E pId, Action pFunc) => Add(new State<E>(pId, pFunc));
+    public void Add(E pId, Action pFunc) => Add(new State<E>(this, pId, pFunc));
 
     #endregion
 
