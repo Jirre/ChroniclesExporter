@@ -1,5 +1,6 @@
 ﻿using ChroniclesExporter.StateMachine;
 using ChroniclesExporter.States;
+using ChroniclesExporter.Utility;
 
 namespace ChroniclesExporter;
 
@@ -12,7 +13,7 @@ public static class Program
         InitStateMachine();
         _stateMachine.Goto(EProgramState.Init);
 
-        while (_stateMachine.IsRunning())
+        while (!_stateMachine.IsCurrentState(EProgramState.Complete))
         {
             _stateMachine.Update();
         }
@@ -24,5 +25,12 @@ public static class Program
     {
         _stateMachine.Add(new InitState(_stateMachine, EProgramState.Init));
         _stateMachine.Add(new MySqlLoginState(_stateMachine, EProgramState.MySqlLogin));
+        
+        _stateMachine.Add(new MySqlTestState(_stateMachine, EProgramState.MySqlTest));
+        
+        _stateMachine.Add(new LogState(_stateMachine, EProgramState.Log));
+        _stateMachine.Add(EProgramState.Complete, CompleteState);
     }
+    
+    private static void CompleteState() { }
 }

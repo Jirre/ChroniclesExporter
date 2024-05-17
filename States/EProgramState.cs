@@ -11,6 +11,6 @@ public enum EProgramState
     MySqlWrite,
     MySqlLink,
     
+    Log,
     Complete,
-    FatalError
 }

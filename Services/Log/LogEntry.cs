@@ -1,7 +1,10 @@
-﻿namespace ChroniclesExporter.Log;
+﻿using ChroniclesExporter.Utility;
 
-public readonly struct LogEntry(ELogTag pTag, string pContext = "")
+namespace ChroniclesExporter.Log;
+
+public readonly struct LogEntry(EConsoleMark pMark, ELogTag pTag, string pContext = "")
 {
+    public EConsoleMark Mark { get; } = pMark;
     public ELogTag Tag { get; } = pTag;
     public string Context { get; } = pContext;
     public DateTime Time { get; } = DateTime.Now;

@@ -19,7 +19,7 @@ public abstract class MdReader<T> : IReader
         foreach (string file in pFiles)
         {
             if (!File.Exists(file))
-                LogHandler.Add(ELogTag.FileNotFound, $"Path: {file}");
+                LogHandler.Warning(ELogTag.FileNotFound, $"Path: {file}");
             else tasks.Add(ReadFile(file));
         }
         

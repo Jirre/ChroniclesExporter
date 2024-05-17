@@ -21,14 +21,22 @@ public class MySqlTestState(StateMachine<EProgramState> pStateMachine, EProgramS
 
     public override void Update()
     {
-        if (_task.IsCompleted)
+        if (!_task.IsCompleted)
         {
             ConsoleUtility.OverwriteMarkedLine("Testing MySql Connection", EConsoleMark.Waiting);
             return;
         }
         ConsoleUtility.OverwriteMarkedLine(GetOutputContext(), _outputCode == 0 ? EConsoleMark.Check : EConsoleMark.Error);
-        
-        
+        if (_outputCode == 0)
+        {
+            StateMachine.Goto(EProgramState.Index);
+            return;
+        }
+        Console.WriteLine();
+        Console.CursorVisible = true;
+        StateMachine.Goto(ConsoleUtility.ConfirmPrompt("Change Login Credentials?")
+            ? EProgramState.MySqlLogin
+            : EProgramState.Log);
     }
 
     private string GetOutputContext()
