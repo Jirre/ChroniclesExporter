@@ -11,14 +11,9 @@ public class InitState(StateMachine<EProgramState> pStateMachine, EProgramState 
     public override void Update()
     {
         ReadEnvFiles();
-
-        if (TryGetEnvironmentVariable("MYSQL_SERVER", out string server)) MySqlHandler.SERVER = server;
-        if (TryGetEnvironmentVariable("MYSQL_PORT", out string port)) MySqlHandler.PORT = port;
-        if (TryGetEnvironmentVariable("MYSQL_DATABASE", out string database)) MySqlHandler.DATABASE = database;
-        if (TryGetEnvironmentVariable("MYSQL_USER_ID", out string userId)) MySqlHandler.USER_ID = userId;
-        if (TryGetEnvironmentVariable("MYSQL_PASSWORD", out string password)) MySqlHandler.PASSWORD = password;
-
-        if (string.IsNullOrWhiteSpace(MySqlHandler.USER_ID) || string.IsNullOrWhiteSpace(MySqlHandler.PASSWORD))
+        MySqlHandler.SetEnvironmentVariables();
+        
+        if (string.IsNullOrWhiteSpace(MySqlHandler.UserId) || string.IsNullOrWhiteSpace(MySqlHandler.Password))
         {
             StateMachine.Goto(EProgramState.MySqlLogin);
             return;
@@ -45,11 +40,5 @@ public class InitState(StateMachine<EProgramState> pStateMachine, EProgramState 
                 Environment.SetEnvironmentVariable(parts[0], parts[1]);
             }
         }
-    }
-
-    private static bool TryGetEnvironmentVariable(string pKey, out string pValue)
-    {
-        pValue = Environment.GetEnvironmentVariable(pKey);
-        return pValue != null;
     }
 }

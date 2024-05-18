@@ -2,12 +2,12 @@
 
 namespace ChroniclesExporter.Log;
 
-public readonly struct LogEntry(EConsoleMark pMark, ELogTag pTag, string pContext = "")
+public readonly struct LogEntry(EConsoleMark pMark, ELogCode pCode, string pContext = "")
 {
     public EConsoleMark Mark { get; } = pMark;
-    public ELogTag Tag { get; } = pTag;
+    public ELogCode Code { get; } = pCode;
     public string Context { get; } = pContext;
     public DateTime Time { get; } = DateTime.Now;
 
-    public override string ToString() => $"[{Time:HH:mm:ss zz} {Tag.ToString()}; {Context}]";
+    public override string ToString() => $"[{Time:HH:mm:ss zz} {Code.ToString()}; {Context}]";
 }

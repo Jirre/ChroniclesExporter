@@ -12,9 +12,9 @@ public class MySqlLoginState(StateMachine<EProgramState> pStateMachine, EProgram
         Console.CursorVisible = true;
         Console.WriteLine("--- MySql Login Credentials ---");
         Console.Write("User Id: ");
-        MySqlHandler.USER_ID = Console.ReadLine() ?? string.Empty;
+        MySqlHandler.UserId = Console.ReadLine() ?? string.Empty;
         Console.Write("Password: ");
-        MySqlHandler.USER_ID = ReadPassword();
+        MySqlHandler.Password = ReadPassword();
         Console.WriteLine();
         Console.CursorVisible = false;
         

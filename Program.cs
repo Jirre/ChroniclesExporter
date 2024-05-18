@@ -1,21 +1,20 @@
 ﻿using ChroniclesExporter.StateMachine;
 using ChroniclesExporter.States;
-using ChroniclesExporter.Utility;
 
 namespace ChroniclesExporter;
 
 public static class Program
 {
-    private static StateMachine<EProgramState> _stateMachine = new StateMachine<EProgramState>();
+    private static readonly StateMachine<EProgramState> STATE_MACHINE = new StateMachine<EProgramState>();
     
-    private static void Main(string[] args)
+    private static void Main(string[] pArgs)
     {
         InitStateMachine();
-        _stateMachine.Goto(EProgramState.Init);
+        STATE_MACHINE.Goto(EProgramState.Init);
 
-        while (!_stateMachine.IsCurrentState(EProgramState.Complete))
+        while (!STATE_MACHINE.IsCurrentState(EProgramState.Complete))
         {
-            _stateMachine.Update();
+            STATE_MACHINE.Update();
         }
 
         Console.ReadKey();
@@ -23,13 +22,14 @@ public static class Program
 
     private static void InitStateMachine()
     {
-        _stateMachine.Add(new InitState(_stateMachine, EProgramState.Init));
-        _stateMachine.Add(new MySqlLoginState(_stateMachine, EProgramState.MySqlLogin));
+        STATE_MACHINE.Add(new InitState(STATE_MACHINE, EProgramState.Init));
+        STATE_MACHINE.Add(new MySqlLoginState(STATE_MACHINE, EProgramState.MySqlLogin));
         
-        _stateMachine.Add(new MySqlTestState(_stateMachine, EProgramState.MySqlTest));
+        STATE_MACHINE.Add(new MySqlTestState(STATE_MACHINE, EProgramState.MySqlTest));
+        STATE_MACHINE.Add(new IndexState(STATE_MACHINE, EProgramState.Index));
         
-        _stateMachine.Add(new LogState(_stateMachine, EProgramState.Log));
-        _stateMachine.Add(EProgramState.Complete, CompleteState);
+        STATE_MACHINE.Add(new LogState(STATE_MACHINE, EProgramState.Log));
+        STATE_MACHINE.Add(EProgramState.Complete, CompleteState);
     }
     
     private static void CompleteState() { }

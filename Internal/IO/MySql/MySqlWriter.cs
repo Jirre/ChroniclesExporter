@@ -13,15 +13,15 @@ public interface IMySqlWriter : IWriter
 
 public abstract class MySqlWriter<T> : IMySqlWriter, IWriter
 {
-    protected readonly MySqlConnection Connection = new($"server={MySqlHandler.SERVER};" +
-                                                        $"port={MySqlHandler.PORT};" +
-                                                        $"database={MySqlHandler.DATABASE};" +
-                                                        $"user={MySqlHandler.USER_ID};" +
-                                                        $"password={MySqlHandler.PASSWORD}");
+    protected readonly MySqlConnection Connection = new($"server={MySqlHandler.Server};" +
+                                                        $"port={MySqlHandler.Port};" +
+                                                        $"database={MySqlHandler.Database};" +
+                                                        $"user={MySqlHandler.UserId};" +
+                                                        $"password={MySqlHandler.Password}");
     protected T[] QueryQueue;
     protected int LogPosition;
     
-    public abstract Enum TableId { get; }
+    public abstract Enum Id { get; }
     
     public Task? Task { get; private set; }
 
@@ -29,7 +29,7 @@ public abstract class MySqlWriter<T> : IMySqlWriter, IWriter
 
     public void LogStatus() =>
         ConsoleUtility.OverwriteMarkedLine(
-            TableId.ToString(), 
+            Id.ToString(), 
             IsReady ? EConsoleMark.Check : EConsoleMark.Waiting,
             LogPosition);
 
@@ -37,7 +37,7 @@ public abstract class MySqlWriter<T> : IMySqlWriter, IWriter
     {
         QueryQueue = pQueries;
         LogPosition = Console.CursorTop;
-        ConsoleUtility.WriteMarkedLine(TableId.ToString(), EConsoleMark.Waiting);
+        ConsoleUtility.WriteMarkedLine(Id.ToString(), EConsoleMark.Waiting);
     }
     
     public Task Write()

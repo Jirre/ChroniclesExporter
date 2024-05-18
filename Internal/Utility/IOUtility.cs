@@ -2,6 +2,9 @@
 
 public class IOUtility
 {
+    /// <summary>
+    /// Returns the project's root folder
+    /// </summary>
     public static string GetRoot()
     {
 #if DEBUG
@@ -11,6 +14,9 @@ public class IOUtility
 #endif
     }
     
+    /// <summary>
+    /// Returns the project's data folder
+    /// </summary>
     public static string GetDataRoot()
     {
 #if DEBUG

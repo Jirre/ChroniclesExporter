@@ -1,6 +1,6 @@
 ﻿namespace ChroniclesExporter;
 
-public enum ELinks
+public enum ELink
 {
     ClassAbilities,
     ClassFeatures,

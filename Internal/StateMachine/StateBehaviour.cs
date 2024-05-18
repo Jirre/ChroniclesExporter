@@ -5,10 +5,12 @@ namespace ChroniclesExporter.Internal.StateMachine;
 public abstract class StateBehaviour<E>(StateMachine<E> pStateMachine, E pId) : IState<E>
     where E : Enum
 {
+    /// <inheritdoc />
     public StateMachine<E> StateMachine { get; } = pStateMachine;
+    /// <inheritdoc />
     public E Id { get; } = pId;
-
-    public bool IsFistFrame { get; protected set; }
+    /// <inheritdoc />
+    public bool IsFirstFrame { get; protected set; }
 
     /// <inheritdoc/>
     public abstract void Update();
@@ -17,6 +19,6 @@ public abstract class StateBehaviour<E>(StateMachine<E> pStateMachine, E pId) : 
     /// <inheritdoc/>
     public virtual void Deactivate()
     {
-        IsFistFrame = true;
+        IsFirstFrame = true;
     }
 }

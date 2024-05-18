@@ -13,13 +13,14 @@ public abstract class MdReader<T> : IReader
     private static readonly MarkdownPipeline PIPELINE = 
         new MarkdownPipelineBuilder().UseSoftlineBreakAsHardlineBreak().Build();
     
+    /// <inheritdoc/>
     public Task Read(string[] pFiles)
     {
         List<Task> tasks = new List<Task>();
         foreach (string file in pFiles)
         {
             if (!File.Exists(file))
-                LogHandler.Warning(ELogTag.FileNotFound, $"Path: {file}");
+                LogHandler.Warning(ELogCode.FileNotFound, $"Path: {file}");
             else tasks.Add(ReadFile(file));
         }
         
@@ -105,15 +106,15 @@ public abstract class MdReader<T> : IReader
         return true;
     }
 
-    public static string MarkdownLinkToHtml(string pMarkdown)
+    private static string MarkdownLinkToHtml(string pMarkdown)
     {
         Regex regex = StringUtility.MarkdownLinkRegex();
         
-        return regex.Replace(pMarkdown, match =>
+        return regex.Replace(pMarkdown, pMatch =>
         {
-            string text = match.Groups["text"].Value;
-            string url = match.Groups["url"].Value;
-            string title = match.Groups["title"].Captures.Count > 0 ? match.Groups["title"].Value : text;
+            string text = pMatch.Groups["text"].Value;
+            string url = pMatch.Groups["url"].Value;
+            string title = pMatch.Groups["title"].Captures.Count > 0 ? pMatch.Groups["title"].Value : text;
 
             if (StringUtility.TryExtractGuidFromString(url, out Guid guid) &&
                 TableHandler.TryGet(guid, out ETable table) &&

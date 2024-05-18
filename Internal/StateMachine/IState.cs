@@ -3,8 +3,20 @@
 public interface IState<E>
     where E : Enum
 {
+    /// <summary>
+    /// Parent State Machine
+    /// </summary>
     StateMachine<E> StateMachine { get; }
+    
+    /// <summary>
+    /// Unique id of this state within the State Machine
+    /// </summary>
     E Id { get; }
+    
+    /// <summary>
+    /// Defines if this is the first frame after activation
+    /// </summary>
+    bool IsFirstFrame { get; }
 
     /// <summary>
     /// Update Function called each update of the state machine if this state is active

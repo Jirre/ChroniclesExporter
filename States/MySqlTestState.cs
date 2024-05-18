@@ -27,12 +27,12 @@ public class MySqlTestState(StateMachine<EProgramState> pStateMachine, EProgramS
             return;
         }
         ConsoleUtility.OverwriteMarkedLine(GetOutputContext(), _outputCode == 0 ? EConsoleMark.Check : EConsoleMark.Error);
+        Console.WriteLine();
         if (_outputCode == 0)
         {
             StateMachine.Goto(EProgramState.Index);
             return;
         }
-        Console.WriteLine();
         Console.CursorVisible = true;
         StateMachine.Goto(ConsoleUtility.ConfirmPrompt("Change Login Credentials?")
             ? EProgramState.MySqlLogin
@@ -53,11 +53,11 @@ public class MySqlTestState(StateMachine<EProgramState> pStateMachine, EProgramS
 
     private async Task TestConnectionAsync()
     {
-        await using MySqlConnection connection = new($"server={MySqlHandler.SERVER};" +
-                                                     $"port={MySqlHandler.PORT};" +
-                                                     $"database={MySqlHandler.DATABASE};" +
-                                                     $"user={MySqlHandler.USER_ID};" +
-                                                     $"password={MySqlHandler.PASSWORD}");
+        await using MySqlConnection connection = new($"server={MySqlHandler.Server};" +
+                                                     $"port={MySqlHandler.Port};" +
+                                                     $"database={MySqlHandler.Database};" +
+                                                     $"user={MySqlHandler.UserId};" +
+                                                     $"password={MySqlHandler.Password}");
 
         try
         {

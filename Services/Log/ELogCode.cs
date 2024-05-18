@@ -1,6 +1,6 @@
 ﻿namespace ChroniclesExporter.Log;
 
-public enum ELogTag
+public enum ELogCode
 {
     Ok = 0,
     FileNotFound = 1,
