@@ -24,9 +24,10 @@ public static class Program
     {
         STATE_MACHINE.Add(new InitState(STATE_MACHINE, EProgramState.Init));
         STATE_MACHINE.Add(new MySqlLoginState(STATE_MACHINE, EProgramState.MySqlLogin));
-        
         STATE_MACHINE.Add(new MySqlTestState(STATE_MACHINE, EProgramState.MySqlTest));
+        
         STATE_MACHINE.Add(new IndexState(STATE_MACHINE, EProgramState.Index));
+        STATE_MACHINE.Add(new MdReadState(STATE_MACHINE, EProgramState.MdRead));
         
         STATE_MACHINE.Add(new LogState(STATE_MACHINE, EProgramState.Log));
         STATE_MACHINE.Add(EProgramState.Complete, CompleteState);

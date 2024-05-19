@@ -4,11 +4,11 @@ namespace ChroniclesExporter.Table;
 
 public class TableHandler
 {
-    private static TableHandler INSTANCE = new TableHandler();
+    private static readonly TableHandler INSTANCE = new TableHandler();
 
-    private readonly Dictionary<Guid, ETable> _guidToTable = new Dictionary<Guid, ETable>();
-    private readonly Dictionary<ETable, Dictionary<Guid, TableEntry>> _tableIndex =
-        new Dictionary<ETable, Dictionary<Guid, TableEntry>>();
+    private readonly Dictionary<Guid, TableEntry> _guidToTable = new Dictionary<Guid, TableEntry>();
+    
+    public static TableEntry[] Entries => INSTANCE._guidToTable.Values.ToArray();
 
     /// <summary>
     /// Returns the number of indexed table entries
@@ -16,19 +16,10 @@ public class TableHandler
     public static int Count => INSTANCE._guidToTable.Count;
     
     /// <summary>
-    /// Attempts to get the Table-Id associated with the table entry GUID provided
-    /// </summary>
-    public static bool TryGet(Guid pGuid, out ETable pTable) => 
-        INSTANCE._guidToTable.TryGetValue(pGuid, out pTable);
-    /// <summary>
     /// Attempts to get the table entry associated with the GUID provided
     /// </summary>
-    public static bool TryGet(Guid pGuid, out TableEntry pEntry)
-    {
-        pEntry = null!;
-        return INSTANCE._guidToTable.TryGetValue(pGuid, out ETable table) &&
-                INSTANCE._tableIndex[table].TryGetValue(pGuid, out pEntry!);
-    }
+    public static bool TryGet(Guid pGuid, out TableEntry pEntry) => 
+        INSTANCE._guidToTable.TryGetValue(pGuid, out pEntry);
 
     /// <summary>
     /// Register a new table entry with the provided file path and table type
@@ -38,10 +29,12 @@ public class TableHandler
         if (!StringUtility.TryExtractGuidFromString(pPath, out Guid guid))
             return;
         
-        if (!INSTANCE._tableIndex.ContainsKey(pTable))
-            INSTANCE._tableIndex.Add(pTable, new Dictionary<Guid, TableEntry>());
-        
-        INSTANCE._guidToTable.TryAdd(guid, pTable);
-        INSTANCE._tableIndex[pTable].TryAdd(guid, new TableEntry(pTable, pPath));
+        INSTANCE._guidToTable.TryAdd(guid, new TableEntry(pTable, pPath));
+    }
+
+    public static void InsertRow(IRow pRow)
+    {
+        if (INSTANCE._guidToTable.TryGetValue(pRow.Id, out TableEntry? table))
+            table.Row = pRow;
     }
 }

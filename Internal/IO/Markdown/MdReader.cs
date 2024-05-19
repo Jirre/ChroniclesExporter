@@ -117,8 +117,8 @@ public abstract class MdReader<T> : IReader
             string title = pMatch.Groups["title"].Captures.Count > 0 ? pMatch.Groups["title"].Value : text;
 
             if (StringUtility.TryExtractGuidFromString(url, out Guid guid) &&
-                TableHandler.TryGet(guid, out ETable table) &&
-                SettingsHandler.TryGetSettings(table, out ISettings settings) &&
+                TableHandler.TryGet(guid, out TableEntry table) &&
+                SettingsHandler.TryGetSettings(table.Id, out ISettings settings) &&
                 !string.IsNullOrWhiteSpace(settings.LinkClasses))
             {
                 return $"<a href=\"{url}\" class=\"{settings.LinkClasses}\">{title}</a>";
