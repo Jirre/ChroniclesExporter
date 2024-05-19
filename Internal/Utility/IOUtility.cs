@@ -1,6 +1,9 @@
-﻿namespace ChroniclesExporter.Utility;
+﻿using ChroniclesExporter.Log;
+using ChroniclesExporter.Settings;
 
-public class IOUtility
+namespace ChroniclesExporter.Utility;
+
+public static class IOUtility
 {
     /// <summary>
     /// Returns the project's root folder
@@ -24,5 +27,22 @@ public class IOUtility
 #else
         Return GetRoot();
 #endif
+    }
+    
+    public static bool TryGetTypeFromPath(string pPath, out ETable pType, int pMaxDepth = 3, bool pLogError = true)
+    {
+        string path = pPath;
+        for (int index = 0; 
+             (index < 3 || pMaxDepth <= 0) && path != Path.GetPathRoot(pPath); 
+             index++)
+        {
+            path = Directory.GetParent(path)?.FullName ?? "NULL";
+            string fileName = Path.GetFileName(path);
+            if (!string.IsNullOrWhiteSpace(fileName) && SettingsHandler.TryGetTable(fileName, out pType))
+                return true;
+        }
+        if (pLogError) LogHandler.Warning(ELogCode.IndexerPathNotFound, pPath);
+        pType = 0;
+        return false;
     }
 }

@@ -29,7 +29,10 @@ public static class TypeUtility
         foreach (Assembly assembly in assemblies)
         {
             types.AddRange(assembly.GetTypes().Where(
-                e => e.IsAssignableFrom(pAbstractParent) && e is {IsAbstract: false, IsInterface: true}));
+                pType => 
+                    pType.IsClass &&
+                    pType is {IsAbstract: false, IsInterface: false} &&
+                    pAbstractParent.IsAssignableFrom(pType)));
         }
 
         return types.ToArray();

@@ -36,6 +36,7 @@ public class MdReadState(StateMachine<EProgramState> pStateMachine, EProgramStat
         }
 
         _task = Task.WhenAll(tasks);
+        ConsoleUtility.WriteMarkedLine("Reading Markdown Data", EConsoleMark.Waiting);
     }
 
     public override void Update()
@@ -69,6 +70,7 @@ public class MdReadState(StateMachine<EProgramState> pStateMachine, EProgramStat
         }
         
         ConsoleUtility.OverwriteMarkedLine("Reading Completed", EConsoleMark.Check);
+        Console.WriteLine();
         StateMachine.Goto(EProgramState.MySqlWrite);
     }
 }

@@ -17,7 +17,7 @@ public class IndexState(StateMachine<EProgramState> pStateMachine, EProgramState
         string[] files = Directory.GetFiles(IOUtility.GetDataRoot(), "*.md", SearchOption.AllDirectories);
         foreach (string file in files)
         {
-            if (SettingsHandler.TryGetTable(file, out ETable table))
+            if (IOUtility.TryGetTypeFromPath(file, out ETable table))
             {
                 TableHandler.Register(file, table);
             }
@@ -25,9 +25,9 @@ public class IndexState(StateMachine<EProgramState> pStateMachine, EProgramState
         Console.WriteLine("--- Indexing ---");
         ConsoleUtility.WriteMarkedLine($"{files.Length} Files Found, {TableHandler.Count} files indexed", 
             files.Length == TableHandler.Count ? EConsoleMark.Check : EConsoleMark.Warning);
+        ConsoleUtility.WriteMarkedLine($"{SettingsHandler.Count} Settings Indexed", EConsoleMark.Check);
         ConsoleUtility.WriteMarkedLine($"{MySqlHandler.TableCount} MySql Table Writers Indexed", EConsoleMark.Check);
         ConsoleUtility.WriteMarkedLine($"{MySqlHandler.LinkCount} MySql Link Writers Indexed", EConsoleMark.Check);
-        ConsoleUtility.WriteMarkedLine($"{SettingsHandler.Count} Settings Indexed", EConsoleMark.Check);
         Console.WriteLine();
         
         StateMachine.Goto(EProgramState.MdRead);

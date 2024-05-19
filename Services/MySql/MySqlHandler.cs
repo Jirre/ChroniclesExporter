@@ -16,8 +16,8 @@ public class MySqlHandler
 
     private readonly Dictionary<ETable, MySqlWriter<IRow>> _tableWriters =
         new Dictionary<ETable, MySqlWriter<IRow>>();
-    private readonly Dictionary<ELink, MySqlLinkWriter<ILink>> _linkWriters =
-        new Dictionary<ELink, MySqlLinkWriter<ILink>>();
+    private readonly Dictionary<ELink, MySqlWriter<ILink>> _linkWriters =
+        new Dictionary<ELink, MySqlWriter<ILink>>();
 
     /// <summary>
     /// Returns the number of indexed table entries
@@ -28,6 +28,41 @@ public class MySqlHandler
     /// </summary>
     public static int LinkCount => INSTANCE._linkWriters.Count;
 
+    /// <summary>
+    /// Load all Table- and Link-Writers within the project
+    /// </summary>
+    public static void Load()
+    {
+        LoadTableWriters();
+        LoadLinkWriters();
+    }
+
+    private static void LoadTableWriters()
+    {
+        Type[] types = TypeUtility.GetTypesBasedOnAbstractParent(typeof(IMySqlTableWriter));
+        foreach (Type type in types)
+        {
+            if (Activator.CreateInstance(type) is MySqlWriter<IRow> writer)
+                INSTANCE._tableWriters.TryAdd((ETable)writer.Id, writer);
+        }
+    }
+    
+    private static void LoadLinkWriters()
+    {
+        Type[] types = TypeUtility.GetTypesBasedOnAbstractParent(typeof(IMySqlLinkWriter));
+        foreach (Type type in types)
+        {
+            if (Activator.CreateInstance(type) is MySqlWriter<ILink> writer)
+                INSTANCE._linkWriters.TryAdd((ELink)writer.Id, writer);
+        }
+    }
+
+    public static bool TryGetWriter(ETable pTable, out MySqlWriter<IRow> pWriter) =>
+        INSTANCE._tableWriters.TryGetValue(pTable, out pWriter);
+    
+    public static bool TryGetWriter(ELink pLink, out MySqlWriter<ILink> pWriter) =>
+        INSTANCE._linkWriters.TryGetValue(pLink, out pWriter);
+    
     /// <summary>
     /// Sets the connection variables to any provided environment variables
     /// </summary>
@@ -44,34 +79,5 @@ public class MySqlHandler
     {
         pValue = Environment.GetEnvironmentVariable(pKey);
         return pValue != null;
-    }
-
-    /// <summary>
-    /// Load all Table- and Link-Writers within the project
-    /// </summary>
-    public static void Load()
-    {
-        LoadTableWriters();
-        LoadLinkWriters();
-    }
-
-    private static void LoadTableWriters()
-    {
-        Type[] types = TypeUtility.GetTypesBasedOnAbstractParent(typeof(IMySqlTableWriter));
-        foreach (Type type in types)
-        {
-            if (Activator.CreateInstance(type) is MySqlTableWriter<IRow> writer)
-                INSTANCE._tableWriters.TryAdd(writer.TableId, writer);
-        }
-    }
-    
-    private static void LoadLinkWriters()
-    {
-        Type[] types = TypeUtility.GetTypesBasedOnAbstractParent(typeof(IMySqlLinkWriter));
-        foreach (Type type in types)
-        {
-            if (Activator.CreateInstance(type) is MySqlLinkWriter<ILink> writer)
-                INSTANCE._linkWriters.TryAdd(writer.LinkId, writer);
-        }
     }
 }
