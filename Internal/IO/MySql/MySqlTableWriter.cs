@@ -26,7 +26,6 @@ public abstract class MySqlTableWriter<T> : MySqlWriter<IRow>, IMySqlTableWriter
             await using MySqlCommand command = BuildCommand();
             await command.PrepareAsync();
             await WaitForDependencies();
-            int i = 0;
             foreach (IRow query in pQueries)
             {
                 FillCommand(command, (T)query);

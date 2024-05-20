@@ -24,12 +24,16 @@ public class SettingsHandler
             }
         }
     }
-    
+
     /// <summary>
     /// Attempts to get the setting object associated with the provided Table Type
     /// </summary>
-    public static bool TryGetSettings(ETable pType, out ISettings pSettings) =>
-        INSTANCE._settings.TryGetValue(pType, out pSettings);
+    public static bool TryGetSettings(ETable pType, out ISettings pSettings)
+    {
+#pragma warning disable CS8601 // Possible null reference assignment.
+        return INSTANCE._settings.TryGetValue(pType, out pSettings);
+#pragma warning restore CS8601 // Possible null reference assignment.
+    }
     
     /// <summary>
     /// Attempts to get the table-id associated with the provided file-path

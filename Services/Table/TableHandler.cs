@@ -18,14 +18,21 @@ public class TableHandler
     /// </summary>
     public static int Count => INSTANCE._guidToTable.Count;
 
+    /// <summary>
+    /// Checks if a table entry with the provided GUID exists
+    /// </summary>
     public static bool Contains(Guid pGuid) =>
         INSTANCE._guidToTable.ContainsKey(pGuid);
-    
+
     /// <summary>
     /// Attempts to get the table entry associated with the GUID provided
     /// </summary>
-    public static bool TryGet(Guid pGuid, out TableEntry pEntry) => 
-        INSTANCE._guidToTable.TryGetValue(pGuid, out pEntry);
+    public static bool TryGet(Guid pGuid, out TableEntry pEntry)
+    {
+#pragma warning disable CS8601 // Possible null reference assignment.
+        return INSTANCE._guidToTable.TryGetValue(pGuid, out pEntry);
+#pragma warning restore CS8601 // Possible null reference assignment.
+    }
 
     /// <summary>
     /// Register a new table entry with the provided file path and table type
@@ -38,6 +45,9 @@ public class TableHandler
         INSTANCE._guidToTable.TryAdd(guid, new TableEntry(pTable, pPath));
     }
 
+    /// <summary>
+    /// Register a new link entry with the provided link type
+    /// </summary>
     public static void RegisterLink(ELink pTable, ILink pLink)
     {
         if (!INSTANCE._links.ContainsKey(pTable))

@@ -16,7 +16,7 @@ public abstract class MySqlWriter<T> : IMySqlWriter
                                                         $"database={MySqlHandler.Database};" +
                                                         $"user={MySqlHandler.UserId};" +
                                                         $"password={MySqlHandler.Password}");
-    protected T[] QueryQueue;
+    protected T[]? QueryQueue;
     
     public abstract Enum Id { get; }
     
@@ -33,7 +33,9 @@ public abstract class MySqlWriter<T> : IMySqlWriter
     
     public Task Write()
     {
-        Task = QueryQueue.Length == 0 ? Task.CompletedTask : Task.Run(() => WriteAsync(QueryQueue));
+        if (QueryQueue == null)
+            return Task.CompletedTask;
+        Task = QueryQueue?.Length == 0 ? Task.CompletedTask : Task.Run(() => WriteAsync(QueryQueue!));
         return Task;
     }
 

@@ -24,7 +24,9 @@ public class MySqlWriteState(StateMachine<EProgramState> pStateMachine, EProgram
         {
             if (!tables.ContainsKey(entry.Id))
                 tables.Add(entry.Id, new List<IRow>());
-            tables[entry.Id].Add(entry.Row);
+            
+            if (entry.Row != null)
+                tables[entry.Id].Add(entry.Row);
         }
 
         foreach (KeyValuePair<ETable,List<IRow>> kvp in tables)

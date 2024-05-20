@@ -59,10 +59,10 @@ public class MySqlHandler
     }
 
     public static bool TryGetWriter(ETable pTable, out MySqlWriter<IRow> pWriter) =>
-        INSTANCE._tableWriters.TryGetValue(pTable, out pWriter);
+        INSTANCE._tableWriters.TryGetValue(pTable, out pWriter!);
     
     public static bool TryGetWriter(ELink pLink, out MySqlWriter<ILink> pWriter) =>
-        INSTANCE._linkWriters.TryGetValue(pLink, out pWriter);
+        INSTANCE._linkWriters.TryGetValue(pLink, out pWriter!);
     
     /// <summary>
     /// Sets the connection variables to any provided environment variables
@@ -78,7 +78,9 @@ public class MySqlHandler
 
     private static bool TryGetEnvironmentVariable(string pKey, out string pValue)
     {
+#pragma warning disable CS8601 // Possible null reference assignment.
         pValue = Environment.GetEnvironmentVariable(pKey);
+#pragma warning restore CS8601 // Possible null reference assignment.
         return pValue != null;
     }
 }

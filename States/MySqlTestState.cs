@@ -10,18 +10,18 @@ namespace ChroniclesExporter.States;
 public class MySqlTestState(StateMachine<EProgramState> pStateMachine, EProgramState pId) : 
     StateBehaviour<EProgramState>(pStateMachine, pId)
 {
-    private Task _task;
-    private int _outputCode = 0;
+    private Task? _task;
+    private int _outputCode;
 
     public override void Activate()
     {
         base.Activate();
         _task = TestConnectionAsync();
 
-        AnsiConsole.Status().Start("Testing MySql Connection", ctx =>
+        AnsiConsole.Status().Start("Testing MySql Connection", pContext =>
         {
-            ctx.Spinner(Spinner.Known.Dots);
-            ctx.SpinnerStyle(Style.Parse("blue"));
+            pContext.Spinner(Spinner.Known.Dots);
+            pContext.SpinnerStyle(Style.Parse("blue"));
 
             while (!_task.IsCompleted) {}
         });
@@ -29,7 +29,7 @@ public class MySqlTestState(StateMachine<EProgramState> pStateMachine, EProgramS
 
     public override void Update()
     {
-        if (!_task.IsCompleted)
+        if (!_task?.IsCompleted ?? true)
             return;
 
         Console.WriteLine();

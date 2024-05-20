@@ -11,7 +11,7 @@ public static class IOUtility
     public static string GetRoot()
     {
 #if DEBUG
-        return Directory.GetParent(Environment.CurrentDirectory)?.Parent?.Parent?.FullName;
+        return Directory.GetParent(Environment.CurrentDirectory)?.Parent?.Parent?.FullName ?? "NULL";
 #else
         return path = Environment.CurrentDirectory;
 #endif
