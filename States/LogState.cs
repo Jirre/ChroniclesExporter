@@ -2,6 +2,7 @@
 using ChroniclesExporter.Log;
 using ChroniclesExporter.StateMachine;
 using ChroniclesExporter.Utility;
+using Spectre.Console;
 
 namespace ChroniclesExporter.States;
 
@@ -19,38 +20,37 @@ public class LogState(StateMachine<EProgramState> pStateMachine, EProgramState p
             StateMachine.Goto(EProgramState.Complete);
             return;
         }
-
-        Console.WriteLine("--- Log Output ---");
-        Console.WriteLine($"{LogHandler.InfoCount} Info Log{(LogHandler.InfoCount != 1 ? 's' : ' ')}");
-        Console.WriteLine($"{LogHandler.WarningCount} Warning Log{(LogHandler.WarningCount != 1 ? 's' : ' ')}");
-        Console.WriteLine($"{LogHandler.ErrorCount} Error Log{(LogHandler.ErrorCount != 1 ? 's' : ' ')}");
         
-        int output = ConsoleUtility.ComplexPrompt("Print:", [
-            "None",
-            "Info",
-            "Warning",
-            "Error",
-            "Warning + Error",
-            "All"
-        ]);
+        AnsiConsole.Write(new Rule("[blue]Print Logs[/]").Justify(Justify.Left));
+        
+        BreakdownChart chart = new BreakdownChart();
+        chart.AddItem("Info", LogHandler.InfoCount, Color.Grey);
+        chart.AddItem("Warning", LogHandler.WarningCount, Color.Yellow);
+        chart.AddItem("Error", LogHandler.ErrorCount, Color.Red);
+        chart.Width(56);
+        AnsiConsole.Write(new Panel(chart));
+        
+        List<string> outputs = AnsiConsole.Prompt(
+            new MultiSelectionPrompt<string>()
+                .Title("Select what logs to print")
+                .NotRequired()
+                .InstructionsText("(Press [blue]<space>[/] to toggle a fruit, " +
+                                  "[green]<enter>[/] to accept)")
+                .AddChoices(new string[]
+                {
+                    "Info",
+                    "Warning",
+                    "Error"
+                }));
 
-        EConsoleMark outputMarks = OutputToMark(output);
-        if (outputMarks != 0)
-            LogHandler.Print(outputMarks);
+        EConsoleMark marks = 0;
+        if (outputs.Contains("Info")) marks |= EConsoleMark.Info;
+        if (outputs.Contains("Warning")) marks |= EConsoleMark.Warning;
+        if (outputs.Contains("Error")) marks |= EConsoleMark.Error;
+        
+        if (marks != 0)
+            LogHandler.Print(marks);
         
         StateMachine.Goto(EProgramState.Complete);
-    }
-
-    private static EConsoleMark OutputToMark(int pOption)
-    {
-        return pOption switch
-        {
-            1 => EConsoleMark.Info,
-            2 => EConsoleMark.Warning,
-            3 => EConsoleMark.Error,
-            4 => EConsoleMark.Warning | EConsoleMark.Error,
-            5 => EConsoleMark.Info | EConsoleMark.Warning | EConsoleMark.Error,
-            _ => 0
-        };
     }
 }

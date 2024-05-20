@@ -1,11 +1,12 @@
 ﻿using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace ChroniclesExporter.Utility;
 
 public static partial class StringUtility
 {
-    [GeneratedRegex(@"(?<!%20)[0-9a-fA-F]{32}")]
+    [GeneratedRegex(@"[0-9a-fA-F]{32}")]
     private static partial Regex UrlGuidRegex();
     public static bool TryExtractGuidFromString(string pUrl, out Guid pGuid)
     {
@@ -17,7 +18,7 @@ public static partial class StringUtility
 
         // Use negative lookbehind to exclude "%20" before the 32 hex characters
         Regex regex = UrlGuidRegex();
-        MatchCollection matches = regex.Matches(pUrl);
+        MatchCollection matches = regex.Matches(HttpUtility.UrlDecode(pUrl));
 
         // Check if there's a match and return the captured string
         if (matches.Count > 0)

@@ -1,6 +1,7 @@
 ﻿using ChroniclesExporter.Internal.StateMachine;
 using ChroniclesExporter.MySql;
 using ChroniclesExporter.StateMachine;
+using Spectre.Console;
 
 namespace ChroniclesExporter.States;
 
@@ -9,13 +10,13 @@ public class MySqlLoginState(StateMachine<EProgramState> pStateMachine, EProgram
 {
     public override void Update()
     {
+        Console.Clear();
+        Rule header = new Rule("[blue]MySql Login Credential[/]");
+        header.Justification = Justify.Left;
+        AnsiConsole.Write(header);
         Console.CursorVisible = true;
-        Console.WriteLine("--- MySql Login Credentials ---");
-        Console.Write("User Id: ");
-        MySqlHandler.UserId = Console.ReadLine() ?? string.Empty;
-        Console.Write("Password: ");
-        MySqlHandler.Password = ReadPassword();
-        Console.WriteLine();
+        MySqlHandler.UserId = AnsiConsole.Ask<string>("User Id:");
+        MySqlHandler.Password = AnsiConsole.Prompt(new TextPrompt<string>("Password:").Secret());
         Console.CursorVisible = false;
         
         StateMachine.Goto(EProgramState.MySqlTest);

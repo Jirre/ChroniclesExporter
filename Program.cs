@@ -29,6 +29,7 @@ public static class Program
         STATE_MACHINE.Add(new IndexState(STATE_MACHINE, EProgramState.Index));
         STATE_MACHINE.Add(new MdReadState(STATE_MACHINE, EProgramState.MdRead));
         STATE_MACHINE.Add(new MySqlWriteState(STATE_MACHINE, EProgramState.MySqlWrite));
+        STATE_MACHINE.Add(new MySqlLinkState(STATE_MACHINE, EProgramState.MySqlLink));
         
         STATE_MACHINE.Add(new LogState(STATE_MACHINE, EProgramState.Log));
         STATE_MACHINE.Add(EProgramState.Complete, CompleteState);

@@ -3,6 +3,7 @@ using ChroniclesExporter.MySql;
 using ChroniclesExporter.StateMachine;
 using ChroniclesExporter.Utility;
 using MySqlConnector;
+using Spectre.Console;
 
 namespace ChroniclesExporter.States;
 
@@ -15,18 +16,24 @@ public class MySqlTestState(StateMachine<EProgramState> pStateMachine, EProgramS
     public override void Activate()
     {
         base.Activate();
-        ConsoleUtility.WriteMarkedLine("Testing MySql Connection", EConsoleMark.Waiting);
         _task = TestConnectionAsync();
+
+        AnsiConsole.Status().Start("Testing MySql Connection", ctx =>
+        {
+            ctx.Spinner(Spinner.Known.Dots);
+            ctx.SpinnerStyle(Style.Parse("blue"));
+
+            while (!_task.IsCompleted) {}
+        });
     }
 
     public override void Update()
     {
         if (!_task.IsCompleted)
-        {
-            ConsoleUtility.OverwriteMarkedLine("Testing MySql Connection", EConsoleMark.Waiting);
             return;
-        }
-        ConsoleUtility.OverwriteMarkedLine(GetOutputContext(), _outputCode == 0 ? EConsoleMark.Check : EConsoleMark.Error);
+
+        Console.WriteLine();
+        ConsoleUtility.WriteMarkedLine(GetOutputContext(), _outputCode == 0 ? EConsoleMark.Check : EConsoleMark.Error);
         Console.WriteLine();
         if (_outputCode == 0)
         {

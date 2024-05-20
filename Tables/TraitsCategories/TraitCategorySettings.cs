@@ -3,7 +3,7 @@
 namespace ChroniclesExporter.TraitsCategories;
 
 [Settings(ETable.TraitCategories)]
-public class TraitsCategoriesSettings : ISettings<TraitsCategoriesReader, TraitsCategoriesWriter>
+public class TraitCategorySettings : ISettings<TraitCategoryReader, TraitCategoryWriter>
 {
     public string FilePath => "Traits-Categories";
     public string Url => "/Traits?id={0}";

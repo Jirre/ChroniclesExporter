@@ -1,4 +1,5 @@
-﻿using ChroniclesExporter.IO.MySql;
+﻿using ChroniclesExporter.IO;
+using ChroniclesExporter.IO.MySql;
 using ChroniclesExporter.Table;
 using ChroniclesExporter.Utility;
 
@@ -13,7 +14,7 @@ public class MySqlHandler
     public static string Password { get; set; } = "";
 
     private static readonly MySqlHandler INSTANCE = new MySqlHandler();
-
+    
     private readonly Dictionary<ETable, MySqlWriter<IRow>> _tableWriters =
         new Dictionary<ETable, MySqlWriter<IRow>>();
     private readonly Dictionary<ELink, MySqlWriter<ILink>> _linkWriters =

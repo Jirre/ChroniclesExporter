@@ -1,17 +1,15 @@
 ﻿using ChroniclesExporter.MySql;
-using ChroniclesExporter.Utility;
 using MySqlConnector;
+using Spectre.Console;
 
 namespace ChroniclesExporter.IO.MySql;
 
 public interface IMySqlWriter : IWriter
 {
-    bool IsReady { get; }
     Task? Task { get; }
-    void LogStatus();
 }
 
-public abstract class MySqlWriter<T> : IMySqlWriter, IWriter
+public abstract class MySqlWriter<T> : IMySqlWriter
 {
     protected readonly MySqlConnection Connection = new($"server={MySqlHandler.Server};" +
                                                         $"port={MySqlHandler.Port};" +
@@ -19,7 +17,6 @@ public abstract class MySqlWriter<T> : IMySqlWriter, IWriter
                                                         $"user={MySqlHandler.UserId};" +
                                                         $"password={MySqlHandler.Password}");
     protected T[] QueryQueue;
-    protected int LogPosition;
     
     public abstract Enum Id { get; }
     
@@ -27,17 +24,11 @@ public abstract class MySqlWriter<T> : IMySqlWriter, IWriter
 
     public bool IsReady => Task?.IsCompleted ?? false;
 
-    public void LogStatus() =>
-        ConsoleUtility.OverwriteMarkedLine(
-            Id.ToString(), 
-            IsReady ? EConsoleMark.Check : EConsoleMark.Waiting,
-            LogPosition);
-
+    public int Progress { get; protected set; }
+    
     public void Prepare(T[] pQueries)
     {
         QueryQueue = pQueries;
-        LogPosition = Console.CursorTop;
-        ConsoleUtility.WriteMarkedLine(Id.ToString(), EConsoleMark.Waiting);
     }
     
     public Task Write()

@@ -13,6 +13,8 @@ public abstract class MdReader<T> : IReader
     private static readonly MarkdownPipeline PIPELINE = 
         new MarkdownPipelineBuilder().UseSoftlineBreakAsHardlineBreak().Build();
     
+    public int Progress { get; private set; }
+    
     /// <inheritdoc/>
     public Task Read(string[] pFiles)
     {
@@ -56,6 +58,7 @@ public abstract class MdReader<T> : IReader
 
         row.Content = Markdown.ToHtml(content, PIPELINE);
         entry.Row = row;
+        Progress++;
     }
 
     #region --- Properties ---
@@ -118,10 +121,10 @@ public abstract class MdReader<T> : IReader
 
             if (StringUtility.TryExtractGuidFromString(url, out Guid guid) &&
                 TableHandler.TryGet(guid, out TableEntry table) &&
-                SettingsHandler.TryGetSettings(table.Id, out ISettings settings) &&
-                !string.IsNullOrWhiteSpace(settings.LinkClasses))
+                SettingsHandler.TryGetSettings(table.Id, out ISettings settings))
             {
-                return $"<a href=\"{url}\" class=\"{settings.LinkClasses}\">{title}</a>";
+                string classes = string.IsNullOrWhiteSpace(settings.LinkClasses) ? "" : $" class=\"{settings.LinkClasses}\"";
+                return $"<a href=\"{settings.Url}\"{classes}>{title}</a>";
             }
             return $"<a href=\"{url}\">{title}</a>";
         });

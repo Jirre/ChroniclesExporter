@@ -7,16 +7,11 @@ public class State<E>(StateMachine<E> pStateMachine, E pId, Action pUpdate) : IS
     public StateMachine<E> StateMachine { get; } = pStateMachine;
     /// <inheritdoc />
     public E Id { get; } = pId;
-    /// <inheritdoc />
-    public bool IsFirstFrame { get; private set; } = true;
     
     /// <inheritdoc />
     public void Update() => pUpdate.Invoke();
     /// <inheritdoc />
     public void Activate() { }
     /// <inheritdoc />
-    public void Deactivate()
-    {
-        IsFirstFrame = true;
-    }
+    public void Deactivate() { }
 }

@@ -1,8 +1,10 @@
 ﻿using ChroniclesExporter.Internal.StateMachine;
+using ChroniclesExporter.IO;
 using ChroniclesExporter.IO.MySql;
 using ChroniclesExporter.MySql;
 using ChroniclesExporter.StateMachine;
 using ChroniclesExporter.Table;
+using Spectre.Console;
 
 namespace ChroniclesExporter.States;
 
@@ -14,7 +16,9 @@ public class MySqlWriteState(StateMachine<EProgramState> pStateMachine, EProgram
     public override void Activate()
     {
         base.Activate();
-        Console.WriteLine("--- MySql Write ---");
+        Rule header = new Rule("[blue]MySql Write[/]");
+        header.Justification = Justify.Left;
+        AnsiConsole.Write(header);
         Dictionary<ETable, List<IRow>> tables = new Dictionary<ETable, List<IRow>>();
         foreach (TableEntry entry in TableHandler.Entries)
         {
@@ -22,6 +26,7 @@ public class MySqlWriteState(StateMachine<EProgramState> pStateMachine, EProgram
                 tables.Add(entry.Id, new List<IRow>());
             tables[entry.Id].Add(entry.Row);
         }
+
         foreach (KeyValuePair<ETable,List<IRow>> kvp in tables)
         {
             if (!MySqlHandler.TryGetWriter(kvp.Key, out MySqlWriter<IRow> writer)) continue;
@@ -30,19 +35,43 @@ public class MySqlWriteState(StateMachine<EProgramState> pStateMachine, EProgram
         }
         foreach (MySqlWriter<IRow> writer in _writers)
             writer.Write();
+        
+        AnsiConsole.Progress()
+            .Start(ctx =>
+            {
+                Dictionary<ETable, ProgressTask> progressTasks = new Dictionary<ETable, ProgressTask>();
+                foreach (KeyValuePair<ETable,List<IRow>> kvp in tables)
+                {
+                    progressTasks.Add(kvp.Key, ctx.AddTask(kvp.Key.ToString(), true, kvp.Value.Count));
+                }
+
+                bool isReady = false;
+                while (!isReady)
+                {
+                    isReady = true;
+                    foreach (MySqlWriter<IRow> writer in _writers)
+                    {
+                        progressTasks[(ETable) writer.Id].Value(writer.Progress);
+                        if (!writer.IsReady)
+                            isReady = false;
+                    }
+                }
+
+                foreach (MySqlWriter<IRow> writer in _writers)
+                {
+                    progressTasks[(ETable) writer.Id].Value(tables[(ETable)writer.Id].Count);
+                }
+            });
     }
 
     public override void Update()
     {
-        bool isReady = true;
         foreach (MySqlWriter<IRow> writer in _writers)
         {
             if (!writer.IsReady)
-                isReady = false;
-            writer.LogStatus();
+                return;
         }
-
-        if (isReady)
-            StateMachine.Goto(EProgramState.MySqlLink);
+        
+        StateMachine.Goto(EProgramState.MySqlLink);
     }
 }

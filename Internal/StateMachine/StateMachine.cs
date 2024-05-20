@@ -11,7 +11,13 @@ public class StateMachine<E>
     /// <summary>
     /// Call the update function of the currently active state (if any)
     /// </summary>
-    public void Update() => _currentState?.Update();
+    public void Update()
+    {
+        if (_currentState == null)
+            return;
+        
+        _currentState.Update();
+    }
 
     /// <summary>
     /// Checks if a state is currently active within the state-machine
@@ -90,19 +96,6 @@ public class StateMachine<E>
             throw new ArgumentOutOfRangeException($"No State with Id [{pId}] was found in the statemachine");
 
         Goto(state);
-    }
-
-    /// <summary>
-    /// Sets the state of this state machine to the next state in the order of inclusion (does wrap)
-    /// </summary>
-    public void Next()
-    {
-        if (_currentState == null)
-            throw new ArgumentOutOfRangeException($"No current state set to move to the next from");
-        
-        int index = _stateOrder.IndexOf(_currentState.Id) + 1;
-        index %= _stateOrder.Count;
-        Goto(_stateOrder[index]);
     }
 
     #endregion

@@ -2,6 +2,6 @@
 
 namespace ChroniclesExporter.TraitsCategories;
 
-public class TraitsCategoriesReader : MdReader<TraitsCategories>
+public class TraitCategoryReader : MdReader<TraitCategory>
 {
 }

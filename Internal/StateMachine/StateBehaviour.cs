@@ -9,16 +9,11 @@ public abstract class StateBehaviour<E>(StateMachine<E> pStateMachine, E pId) : 
     public StateMachine<E> StateMachine { get; } = pStateMachine;
     /// <inheritdoc />
     public E Id { get; } = pId;
-    /// <inheritdoc />
-    public bool IsFirstFrame { get; protected set; }
 
     /// <inheritdoc/>
     public abstract void Update();
     /// <inheritdoc/>
     public virtual void Activate() { }
     /// <inheritdoc/>
-    public virtual void Deactivate()
-    {
-        IsFirstFrame = true;
-    }
+    public virtual void Deactivate() { }
 }

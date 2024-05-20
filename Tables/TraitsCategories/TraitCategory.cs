@@ -2,7 +2,7 @@
 
 namespace ChroniclesExporter.TraitsCategories;
 
-public class TraitsCategories : IRow
+public class TraitCategory : IRow
 {
     public Guid Id { get; set; }
     public string Name { get; set; }

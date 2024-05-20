@@ -3,7 +3,7 @@ using MySqlConnector;
 
 namespace ChroniclesExporter.TraitsCategories;
 
-public class TraitsCategoriesWriter : MySqlTableWriter<TraitsCategories>
+public class TraitCategoryWriter : MySqlTableWriter<TraitCategory>
 {
     public override ETable TableId => ETable.TraitCategories;
     protected override MySqlCommand BuildCommand()
@@ -19,7 +19,7 @@ public class TraitsCategoriesWriter : MySqlTableWriter<TraitsCategories>
         return command;
     }
 
-    protected override void FillCommand(MySqlCommand pCommand, TraitsCategories pData)
+    protected override void FillCommand(MySqlCommand pCommand, TraitCategory pData)
     {
         pCommand.Parameters[0].Value = pData.Id.ToByteArray(true);
         pCommand.Parameters[1].Value = pData.Name;
