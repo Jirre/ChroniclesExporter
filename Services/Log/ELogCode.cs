@@ -2,15 +2,11 @@
 
 public enum ELogCode
 {
-    Ok = 0,
+    FileNotFound = 101,
     
-    FileNotFound = 1,
-    StateNotFound = 2,
-    TaskNotFound = 3,
-    
-    IndexerPathNotFound = 100,
-    IndexerGuidNotFound = 101,
-    IndexerForcedCollision = 105,
+    IndexerPathNotFound = 201,
+    IndexerGuidNotFound = 202,
+    IndexerGuidCollision = 205,
     
     MdReaderError = 300,
     

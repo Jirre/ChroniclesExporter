@@ -1,6 +1,6 @@
 ﻿using ChroniclesExporter.Settings;
 
-namespace ChroniclesExporter.TraitsCategories;
+namespace ChroniclesExporter.Strategy.TraitCategories;
 
 [Settings(ETable.TraitCategories)]
 public class TraitCategorySettings : ISettings<TraitCategoryReader, TraitCategoryWriter>

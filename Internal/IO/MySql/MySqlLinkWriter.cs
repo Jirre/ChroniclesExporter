@@ -4,16 +4,16 @@ using MySqlConnector;
 
 namespace ChroniclesExporter.IO.MySql;
 
-public interface IMySqlLinkWriter
-{
-    public ELink LinkId { get; }
-}
+/// <summary>
+/// Interface used as flag in search through reflection
+/// </summary>
+public interface ILinkWriter;
 
-public abstract class MySqlLinkWriter<T> : MySqlWriter<ILink>, IMySqlLinkWriter
+public abstract class MySqlLinkWriter<T> : MySqlWriter<ILink>, ILinkWriter
     where T : ILink
 {
     public abstract ELink LinkId { get; }
-    public override Enum Id => LinkId;
+    public sealed override Enum Id => LinkId;
 
     protected override async Task WriteAsync(ILink[] pQueries)
     {
@@ -42,6 +42,5 @@ public abstract class MySqlLinkWriter<T> : MySqlWriter<ILink>, IMySqlLinkWriter
     {
         pCommand.Parameters[0].Value = pData.Source.ToByteArray(true);
         pCommand.Parameters[1].Value = pData.Target.ToByteArray(true);
-        
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace ChroniclesExporter.Utility;
 
-public class ConsoleUtility
+public static class ConsoleUtility
 {
     /// <summary>
     /// Prints a confirmation prompt to the console

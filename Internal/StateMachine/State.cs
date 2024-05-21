@@ -3,8 +3,10 @@
 public class State<E>(StateMachine<E> pStateMachine, E pId, Action pUpdate) : IState<E>
     where E : Enum
 {
-    /// <inheritdoc />
-    public StateMachine<E> StateMachine { get; } = pStateMachine;
+    /// <summary>
+    /// Parent State-Machine
+    /// </summary>
+    protected StateMachine<E> StateMachine { get; } = pStateMachine;
     /// <inheritdoc />
     public E Id { get; } = pId;
     

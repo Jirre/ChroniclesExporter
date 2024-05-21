@@ -1,4 +1,6 @@
-﻿using ChroniclesExporter.StateMachine;
+﻿using System.Diagnostics;
+using System.Reflection;
+using ChroniclesExporter.StateMachine;
 using ChroniclesExporter.States;
 
 namespace ChroniclesExporter;
@@ -7,8 +9,9 @@ public static class Program
 {
     private static readonly StateMachine<EProgramState> STATE_MACHINE = new StateMachine<EProgramState>();
     
-    private static void Main(string[] pArgs)
+    private static void Main()
     {
+        Console.WriteLine(FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion);
         InitStateMachine();
         STATE_MACHINE.Goto(EProgramState.Init);
 

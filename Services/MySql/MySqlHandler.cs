@@ -1,5 +1,4 @@
-﻿using ChroniclesExporter.IO;
-using ChroniclesExporter.IO.MySql;
+﻿using ChroniclesExporter.IO.MySql;
 using ChroniclesExporter.Table;
 using ChroniclesExporter.Utility;
 
@@ -40,7 +39,7 @@ public class MySqlHandler
 
     private static void LoadTableWriters()
     {
-        Type[] types = TypeUtility.GetTypesBasedOnAbstractParent(typeof(IMySqlTableWriter));
+        Type[] types = TypeUtility.GetTypesBasedOnAbstractParent(typeof(ITableWriter));
         foreach (Type type in types)
         {
             if (Activator.CreateInstance(type) is MySqlWriter<IRow> writer)
@@ -50,7 +49,7 @@ public class MySqlHandler
     
     private static void LoadLinkWriters()
     {
-        Type[] types = TypeUtility.GetTypesBasedOnAbstractParent(typeof(IMySqlLinkWriter));
+        Type[] types = TypeUtility.GetTypesBasedOnAbstractParent(typeof(ILinkWriter));
         foreach (Type type in types)
         {
             if (Activator.CreateInstance(type) is MySqlWriter<ILink> writer)

@@ -1,8 +1,9 @@
 ﻿using ChroniclesExporter.IO;
+using ChroniclesExporter.Strategy.Links;
 using ChroniclesExporter.Table;
 using ChroniclesExporter.Utility;
 
-namespace ChroniclesExporter.Traits;
+namespace ChroniclesExporter.Strategy.Traits;
 
 public class TraitReader : MdReader<Trait>
 {

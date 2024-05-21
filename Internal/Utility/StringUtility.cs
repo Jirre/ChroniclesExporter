@@ -6,7 +6,7 @@ namespace ChroniclesExporter.Utility;
 
 public static partial class StringUtility
 {
-    [GeneratedRegex(@"[0-9a-fA-F]{32}")]
+    [GeneratedRegex("[0-9a-fA-F]{32}")]
     private static partial Regex UrlGuidRegex();
     public static bool TryExtractGuidFromString(string pUrl, out Guid pGuid)
     {
@@ -34,11 +34,11 @@ public static partial class StringUtility
     {
         Regex regex = MarkdownLinkRegex();
         
-        return regex.Replace(pMarkdown, match =>
+        return regex.Replace(pMarkdown, pMatch =>
         {
-            string text = match.Groups["text"].Value;
-            string url = match.Groups["url"].Value;
-            string title = match.Groups["title"].Captures.Count > 0 ? match.Groups["title"].Value : text;
+            string text = pMatch.Groups["text"].Value;
+            string url = pMatch.Groups["url"].Value;
+            string title = pMatch.Groups["title"].Captures.Count > 0 ? pMatch.Groups["title"].Value : text;
 
             return $"<a href=\"{url}\">{title}</a>";
         });

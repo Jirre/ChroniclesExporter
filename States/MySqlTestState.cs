@@ -60,11 +60,11 @@ public class MySqlTestState(StateMachine<EProgramState> pStateMachine, EProgramS
 
     private async Task TestConnectionAsync()
     {
-        await using MySqlConnection connection = new($"server={MySqlHandler.Server};" +
-                                                     $"port={MySqlHandler.Port};" +
-                                                     $"database={MySqlHandler.Database};" +
-                                                     $"user={MySqlHandler.UserId};" +
-                                                     $"password={MySqlHandler.Password}");
+        await using MySqlConnection connection = new MySqlConnection($"server={MySqlHandler.Server};" +
+                                                                     $"port={MySqlHandler.Port};" +
+                                                                     $"database={MySqlHandler.Database};" +
+                                                                     $"user={MySqlHandler.UserId};" +
+                                                                     $"password={MySqlHandler.Password}");
 
         try
         {

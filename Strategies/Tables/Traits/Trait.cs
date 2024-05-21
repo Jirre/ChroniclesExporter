@@ -1,6 +1,6 @@
 ﻿using ChroniclesExporter.Table;
 
-namespace ChroniclesExporter.Traits;
+namespace ChroniclesExporter.Strategy.Traits;
 
 public class Trait : IRow
 {

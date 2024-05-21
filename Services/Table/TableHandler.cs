@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using ChroniclesExporter.Log;
 using ChroniclesExporter.Utility;
 
 namespace ChroniclesExporter.Table;
@@ -40,9 +41,15 @@ public class TableHandler
     public static void Register(string pPath, ETable pTable)
     {
         if (!StringUtility.TryExtractGuidFromString(pPath, out Guid guid))
+        {
+            LogHandler.Warning(ELogCode.IndexerGuidNotFound, $"Path: {pPath};");
             return;
-        
-        INSTANCE._guidToTable.TryAdd(guid, new TableEntry(pTable, pPath));
+        }
+
+        if (INSTANCE._guidToTable.TryAdd(guid, new TableEntry(pTable, pPath)))
+        {
+            LogHandler.Warning(ELogCode.IndexerGuidCollision, $"Table: {pTable}; Path: {pPath};");
+        }
     }
 
     /// <summary>

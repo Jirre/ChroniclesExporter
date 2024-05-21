@@ -10,15 +10,15 @@ public class LogHandler
     /// <summary>
     /// Returns the number of logged information
     /// </summary>
-    public static int InfoCount => INSTANCE._logList.Count(e => e.Mark == EConsoleMark.Info);
+    public static int InfoCount => INSTANCE._logList.Count(pEntry => pEntry.Mark == EConsoleMark.Info);
     /// <summary>
     /// Returns the number of logged warnings
     /// </summary>
-    public static int WarningCount => INSTANCE._logList.Count(e => e.Mark == EConsoleMark.Warning);
+    public static int WarningCount => INSTANCE._logList.Count(pEntry => pEntry.Mark == EConsoleMark.Warning);
     /// <summary>
     /// Returns the number of logged errors
     /// </summary>
-    public static int ErrorCount => INSTANCE._logList.Count(e => e.Mark == EConsoleMark.Error);
+    public static int ErrorCount => INSTANCE._logList.Count(pEntry => pEntry.Mark == EConsoleMark.Error);
     
     /// <summary>
     /// Logs an information Code

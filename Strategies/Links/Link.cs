@@ -1,6 +1,6 @@
 ﻿using ChroniclesExporter.Table;
 
-namespace ChroniclesExporter;
+namespace ChroniclesExporter.Strategy.Links;
 
 public class Link(Guid pSource, Guid pTarget) : ILink
 {

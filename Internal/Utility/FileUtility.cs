@@ -3,7 +3,7 @@ using ChroniclesExporter.Settings;
 
 namespace ChroniclesExporter.Utility;
 
-public static class IOUtility
+public static class FileUtility
 {
     /// <summary>
     /// Returns the project's root folder
@@ -13,7 +13,7 @@ public static class IOUtility
 #if DEBUG
         return Directory.GetParent(Environment.CurrentDirectory)?.Parent?.Parent?.FullName ?? "NULL";
 #else
-        return path = Environment.CurrentDirectory;
+        return Environment.CurrentDirectory;
 #endif
     }
     
@@ -25,7 +25,7 @@ public static class IOUtility
 #if DEBUG
         return Path.Combine(GetRoot(), "Data");
 #else
-        Return GetRoot();
+        return GetRoot();
 #endif
     }
     

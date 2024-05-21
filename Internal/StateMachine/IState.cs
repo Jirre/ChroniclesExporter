@@ -1,13 +1,8 @@
 ﻿namespace ChroniclesExporter.StateMachine;
 
-public interface IState<E>
+public interface IState<out E>
     where E : Enum
 {
-    /// <summary>
-    /// Parent State Machine
-    /// </summary>
-    StateMachine<E> StateMachine { get; }
-    
     /// <summary>
     /// Unique id of this state within the State Machine
     /// </summary>

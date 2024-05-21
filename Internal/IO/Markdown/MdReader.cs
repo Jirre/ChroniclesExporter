@@ -10,10 +10,11 @@ namespace ChroniclesExporter.IO;
 public abstract class MdReader<T> : IReader
     where T : IRow
 {
-    private static readonly MarkdownPipeline PIPELINE = 
+    private readonly MarkdownPipeline _pipeline = 
         new MarkdownPipelineBuilder().UseSoftlineBreakAsHardlineBreak().Build();
     
     public int Progress { get; private set; }
+    public int TaskCount { get; private set; }
     
     /// <inheritdoc/>
     public Task Read(string[] pFiles)
@@ -25,7 +26,7 @@ public abstract class MdReader<T> : IReader
                 LogHandler.Warning(ELogCode.FileNotFound, $"Path: {file}");
             else tasks.Add(ReadFile(file));
         }
-        
+        TaskCount = tasks.Count;
         return Task.WhenAll(tasks);
     }
 
@@ -56,7 +57,7 @@ public abstract class MdReader<T> : IReader
                 content += output + Environment.NewLine;
         }
 
-        row.Content = Markdown.ToHtml(content, PIPELINE);
+        row.Content = Markdown.ToHtml(content, _pipeline);
         entry.Row = row;
         Progress++;
     }

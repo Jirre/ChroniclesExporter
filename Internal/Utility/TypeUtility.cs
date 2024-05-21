@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using ChroniclesExporter.Settings;
 
 namespace ChroniclesExporter.Utility;
 
@@ -12,7 +11,7 @@ public static class TypeUtility
         List<Type> types = new List<Type>();
         foreach (Assembly assembly in assemblies)
         {
-            types.AddRange(assembly.GetTypes().Where(e => e.IsDefined(typeof(SettingsAttribute))));
+            types.AddRange(assembly.GetTypes().Where(pType => pType.IsDefined(pAttribute)));
         }
 
         return types.ToArray();

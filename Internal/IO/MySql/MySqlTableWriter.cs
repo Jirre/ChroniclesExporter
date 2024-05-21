@@ -6,18 +6,18 @@ using MySqlConnector;
 
 namespace ChroniclesExporter.IO.MySql;
 
-public interface IMySqlTableWriter
-{
-    public ETable TableId { get; }
-}
+/// <summary>
+/// Interface used as flag in search through reflection
+/// </summary>
+public interface ITableWriter;
 
-public abstract class MySqlTableWriter<T> : MySqlWriter<IRow>, IMySqlTableWriter
+public abstract class MySqlTableWriter<T> : MySqlWriter<IRow>, ITableWriter
     where T : IRow
 {
     public abstract ETable TableId { get; }
-    public override Enum Id => TableId;
+    public sealed override Enum Id => TableId;
 
-    protected override async Task WriteAsync(IRow[] pQueries)
+    protected sealed override async Task WriteAsync(IRow[] pQueries)
     {
         try
         {

@@ -1,7 +1,7 @@
 ﻿using ChroniclesExporter.IO.MySql;
 using MySqlConnector;
 
-namespace ChroniclesExporter.Traits;
+namespace ChroniclesExporter.Strategy.Traits;
 
 public class TraitWriter : MySqlTableWriter<Trait>
 {

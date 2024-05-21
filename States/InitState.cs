@@ -23,7 +23,7 @@ public class InitState(StateMachine<EProgramState> pStateMachine, EProgramState 
 
     private static void ReadEnvFiles()
     {
-        string[] files = Directory.GetFiles(IOUtility.GetRoot(), "*.env");
+        string[] files = Directory.GetFiles(FileUtility.GetRoot(), "*.env");
         if (files.Length <= 0) return;
         
         foreach (string file in files)

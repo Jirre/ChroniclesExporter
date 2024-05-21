@@ -3,8 +3,7 @@
 public class StateMachine<E>
     where E : Enum
 {
-    private readonly Dictionary<E, IState<E>> _states =  new Dictionary<E, IState<E>>();
-    private readonly List<E> _stateOrder = new List<E>();
+    private readonly Dictionary<E, IState<E>> _states = new Dictionary<E, IState<E>>();
 
     private IState<E>? _currentState;
 
@@ -13,10 +12,7 @@ public class StateMachine<E>
     /// </summary>
     public void Update()
     {
-        if (_currentState == null)
-            return;
-        
-        _currentState.Update();
+        _currentState?.Update();
     }
 
     /// <summary>
@@ -57,10 +53,8 @@ public class StateMachine<E>
     /// </summary>
     public void Add(IState<E> pState)
     {
-        if (_states.ContainsKey(pState.Id))
-            throw new ArgumentException($"State of key [{pState.Id}] already added to statemachine");
-        _states.Add(pState.Id, pState);
-        _stateOrder.Add(pState.Id);
+        if (!_states.TryAdd(pState.Id, pState))
+            throw new ArgumentException($"State of key [{pState.Id}] already added to state-machine");
     }
     /// <summary>
     /// Adds a new state with the provided Id and Update Function as a new state to the state-machine

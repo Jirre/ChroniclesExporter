@@ -1,22 +1,16 @@
 ﻿using ChroniclesExporter.MySql;
 using MySqlConnector;
-using Spectre.Console;
 
 namespace ChroniclesExporter.IO.MySql;
 
-public interface IMySqlWriter : IWriter
+public abstract class MySqlWriter<T> : IWriter
 {
-    Task? Task { get; }
-}
-
-public abstract class MySqlWriter<T> : IMySqlWriter
-{
-    protected readonly MySqlConnection Connection = new($"server={MySqlHandler.Server};" +
-                                                        $"port={MySqlHandler.Port};" +
-                                                        $"database={MySqlHandler.Database};" +
-                                                        $"user={MySqlHandler.UserId};" +
-                                                        $"password={MySqlHandler.Password}");
-    protected T[]? QueryQueue;
+    protected readonly MySqlConnection Connection = new MySqlConnection($"server={MySqlHandler.Server};" +
+                                                                        $"port={MySqlHandler.Port};" +
+                                                                        $"database={MySqlHandler.Database};" +
+                                                                        $"user={MySqlHandler.UserId};" +
+                                                                        $"password={MySqlHandler.Password}");
+    private T[]? _queries;
     
     public abstract Enum Id { get; }
     
@@ -25,17 +19,18 @@ public abstract class MySqlWriter<T> : IMySqlWriter
     public bool IsReady => Task?.IsCompleted ?? false;
 
     public int Progress { get; protected set; }
+    public int TaskCount => _queries?.Length ?? 0;
     
     public void Prepare(T[] pQueries)
     {
-        QueryQueue = pQueries;
+        _queries = pQueries;
     }
     
     public Task Write()
     {
-        if (QueryQueue == null)
+        if (_queries == null)
             return Task.CompletedTask;
-        Task = QueryQueue?.Length == 0 ? Task.CompletedTask : Task.Run(() => WriteAsync(QueryQueue!));
+        Task = _queries?.Length == 0 ? Task.CompletedTask : Task.Run(() => WriteAsync(_queries!));
         return Task;
     }
 

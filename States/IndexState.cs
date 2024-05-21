@@ -15,35 +15,50 @@ public class IndexState(StateMachine<EProgramState> pStateMachine, EProgramState
     {
         SettingsHandler.Load();
         MySqlHandler.Load();
-        string[] files = Directory.GetFiles(IOUtility.GetDataRoot(), "*.md", SearchOption.AllDirectories);
+        string[] files = Directory.GetFiles(FileUtility.GetDataRoot(), "*.md", SearchOption.AllDirectories);
         foreach (string file in files)
         {
-            if (IOUtility.TryGetTypeFromPath(file, out ETable table))
+            if (FileUtility.TryGetTypeFromPath(file, out ETable table))
             {
                 TableHandler.Register(file, table);
             }
         }
-
-        Rule header = new Rule("[blue]Indexing[/]");
-        header.Justification = Justify.Left;
-        AnsiConsole.Write(header);
         
-        BreakdownChart chart = new BreakdownChart();
-        chart.AddItem("Indexed", TableHandler.Count, Color.Green);
-        chart.AddItem("Un-Indexed", files.Length - TableHandler.Count, Color.Grey);
-        chart.Width(32);
-        AnsiConsole.Write(new Panel(chart));
-        
-        Spectre.Console.Table consoleTable = new Spectre.Console.Table();
-        consoleTable.AddColumn("Type");
-        consoleTable.AddColumn("Indexed Amount");
-        consoleTable.AddRow("Settings", SettingsHandler.Count.ToString());
-        consoleTable.AddRow("Table Writers", MySqlHandler.TableCount.ToString());
-        consoleTable.AddRow("Link Writers", MySqlHandler.LinkCount.ToString());
-        consoleTable.Border(TableBorder.Rounded);
-        consoleTable.Width(36);
-        AnsiConsole.Write(consoleTable);
+        DrawHeader();
+        DrawIndexBreakdown(files.Length);
+        DrawIndexTable();
         
         StateMachine.Goto(EProgramState.MdRead);
+    }
+
+    private static void DrawHeader()
+    {
+        Rule header = new Rule("[blue]Indexing[/]")
+        {
+            Justification = Justify.Left
+        };
+        AnsiConsole.Write(header);
+    }
+    
+    private static void DrawIndexBreakdown(int pFileCount)
+    {
+        BreakdownChart chart = new BreakdownChart();
+        chart.AddItem("Indexed", TableHandler.Count, Color.Green);
+        chart.AddItem("Un-Indexed", pFileCount - TableHandler.Count, Color.Grey);
+        chart.Width(32);
+        AnsiConsole.Write(new Panel(chart));
+    }
+    
+    private static void DrawIndexTable()
+    {
+        Spectre.Console.Table table = new Spectre.Console.Table();
+        table.AddColumn("Type");
+        table.AddColumn("Indexed Amount");
+        table.AddRow("Settings", SettingsHandler.Count.ToString());
+        table.AddRow("Table Writers", MySqlHandler.TableCount.ToString());
+        table.AddRow("Link Writers", MySqlHandler.LinkCount.ToString());
+        table.Border(TableBorder.Rounded);
+        table.Width(36);
+        AnsiConsole.Write(table);
     }
 }

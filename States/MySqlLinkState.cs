@@ -1,5 +1,6 @@
-﻿using ChroniclesExporter.Internal.StateMachine;
+﻿using ChroniclesExporter.IO;
 using ChroniclesExporter.IO.MySql;
+using ChroniclesExporter.Log;
 using ChroniclesExporter.MySql;
 using ChroniclesExporter.StateMachine;
 using ChroniclesExporter.Table;
@@ -8,70 +9,35 @@ using Spectre.Console;
 namespace ChroniclesExporter.States;
 
 public class MySqlLinkState(StateMachine<EProgramState> pStateMachine, EProgramState pId) : 
-    StateBehaviour<EProgramState>(pStateMachine, pId)
+    AProgressState<ELink, IWriter>(pStateMachine, pId)
 {
-    private readonly List<MySqlWriter<ILink>> _writers = new List<MySqlWriter<ILink>>();
-
-    public override void Activate()
+    protected override EProgramState DefaultCompleteState => EProgramState.Log;
+    protected override ELogCode DefaultErrorCode => ELogCode.MySqlError;
+    
+    protected override List<Task> BuildHandlers()
     {
-        base.Activate();
-        Rule header = new Rule("[blue]MySql Linking[/]");
-        header.Justification = Justify.Left;
-        AnsiConsole.Write(header);
-        foreach (KeyValuePair<ELink,List<ILink>> kvp in TableHandler.Links)
+        foreach (KeyValuePair<ELink, List<ILink>> kvp in TableHandler.Links)
         {
             if (!MySqlHandler.TryGetWriter(kvp.Key, out MySqlWriter<ILink> writer)) continue;
-            _writers.Add(writer);
+            Handlers.Add(kvp.Key, writer);
             writer.Prepare(kvp.Value.ToArray());
         }
         
-        foreach (MySqlWriter<ILink> writer in _writers)
-            writer.Write();
-
-        AnsiConsole.Progress()
-            .Columns(
-                new TaskDescriptionColumn(),
-                new ProgressBarColumn(),
-                new PercentageColumn(),
-                new SpinnerColumn()
-            )
-            .Start(ctx =>
-            {
-                Dictionary<ELink, ProgressTask> progressTasks = new Dictionary<ELink, ProgressTask>();
-                foreach (KeyValuePair<ELink, List<ILink>> kvp in TableHandler.Links)
-                {
-                    progressTasks.Add(kvp.Key, ctx.AddTask(kvp.Key.ToString(), true, kvp.Value.Count));
-                }
-
-                bool isReady = false;
-                while (!isReady)
-                {
-                    isReady = true;
-                    foreach (MySqlWriter<ILink> writer in _writers)
-                    {
-                        progressTasks[(ELink) writer.Id].Value(writer.Progress);
-                        if (!writer.IsReady)
-                            isReady = false;
-                    }
-                }
-
-                foreach (MySqlWriter<ILink> writer in _writers)
-                {
-                    progressTasks[(ELink) writer.Id].Value(TableHandler.Links[(ELink) writer.Id].Count);
-                }
-            });
-
-
-    }
-
-    public override void Update()
-    {
-        foreach (MySqlWriter<ILink> writer in _writers)
+        List<Task> tasks = new List<Task>();
+        foreach (KeyValuePair<ELink, IWriter> kvp in Handlers)
         {
-            if (!writer.IsReady)
-                return;
+            tasks.Add(kvp.Value.Write());
         }
-        
-        StateMachine.Goto(EProgramState.Log);
+
+        return tasks;
+    }
+    
+    protected override void OnHeaderDraw()
+    {
+        Rule header = new Rule("[blue]Writing Link Tables to MySql Database[/]")
+        {
+            Justification = Justify.Left
+        };
+        AnsiConsole.Write(header);
     }
 }
