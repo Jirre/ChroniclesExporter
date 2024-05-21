@@ -6,7 +6,7 @@
 
 # Chronicles Exporter
 
-A console tool that parses notion-based markdown exports to a MySql database.
+A console tool that parses notion-based markdown & exports the results to a MySql database.
 
 
 <picture><img alt="Latest Version" src="https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fraw.githubusercontent.com%2FJirre%2FChroniclesExporter%2Fmain%2FChroniclesExporter.csproj&query=%2F%2FVersion%5B1%5D&style=for-the-badge&logo=github&label=Latest%20Release&color=%238ac926"></picture>
