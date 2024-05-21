@@ -46,7 +46,7 @@ public class TableHandler
             return;
         }
 
-        if (INSTANCE._guidToTable.TryAdd(guid, new TableEntry(pTable, pPath)))
+        if (!INSTANCE._guidToTable.TryAdd(guid, new TableEntry(pTable, pPath)))
         {
             LogHandler.Warning(ELogCode.IndexerGuidCollision, $"Table: {pTable}; Path: {pPath};");
         }
