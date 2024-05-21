@@ -1,7 +1,6 @@
-﻿using System.Diagnostics;
-using System.Reflection;
-using ChroniclesExporter.StateMachine;
+﻿using ChroniclesExporter.StateMachine;
 using ChroniclesExporter.States;
+using Spectre.Console;
 
 namespace ChroniclesExporter;
 
@@ -11,7 +10,6 @@ public static class Program
     
     private static void Main()
     {
-        Console.WriteLine(FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion);
         InitStateMachine();
         STATE_MACHINE.Goto(EProgramState.Init);
 
@@ -20,6 +18,7 @@ public static class Program
             STATE_MACHINE.Update();
         }
 
+        DrawCompletionPrompt();
         Console.ReadKey();
     }
 
@@ -39,4 +38,14 @@ public static class Program
     }
     
     private static void CompleteState() { }
+
+    private static void DrawCompletionPrompt()
+    {
+        Panel panel = new Panel(new Rows(
+            new Text("Program Completed", new Style(Color.Green)).Centered(),
+            new Text(""),
+            new Markup("<Press [blue]Any Key[/] to Close>").Centered())).RoundedBorder();
+        panel.Width = 36;
+        AnsiConsole.Write(panel);
+    }
 }

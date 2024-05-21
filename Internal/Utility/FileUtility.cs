@@ -13,7 +13,7 @@ public static class FileUtility
 #if DEBUG
         return Directory.GetParent(Environment.CurrentDirectory)?.Parent?.Parent?.FullName ?? "NULL";
 #else
-        return Environment.CurrentDirectory;
+        return Path.GetFullPath(Environment.CurrentDirectory);
 #endif
     }
     
