@@ -31,7 +31,7 @@ public class TraitReader : MdReader<Trait>
         if (linkGuids.Length == 0)
             return;
         foreach (Guid category in linkGuids)
-            TableHandler.RegisterLink(ELink.TraitCategories, new Link(category, pContainer.Id));
+            TableHandler.RegisterLink(ELink.TraitCategories, new Link(pContainer.Id, category));
     }
 
     private static void GetPriority(string pLine, ref Trait pContainer)
