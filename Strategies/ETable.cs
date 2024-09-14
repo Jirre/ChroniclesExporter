@@ -2,7 +2,6 @@
 
 public enum ETable
 {
-    Abilities,
     Classes,
     ClassFeatures,
     Conditions,

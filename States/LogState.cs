@@ -56,7 +56,7 @@ public class LogState(StateMachine<EProgramState> pStateMachine, EProgramState p
             new MultiSelectionPrompt<string>()
                 .Title("Select what logs to print")
                 .NotRequired()
-                .InstructionsText("(Press [blue]<space>[/] to toggle a fruit, " +
+                .InstructionsText("(Press [blue]<space>[/] to toggle a condition, " +
                                   "[green]<enter>[/] to accept)")
                 .AddChoices("Info", "Warning", "Error"));
 
