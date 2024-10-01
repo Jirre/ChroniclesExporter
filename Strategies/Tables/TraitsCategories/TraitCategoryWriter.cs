@@ -10,7 +10,7 @@ public class TraitCategoryWriter : MySqlTableWriter<TraitCategory>
     {
         MySqlCommand command =
             new MySqlCommand(
-                "INSERT INTO chronicles.TraitCategories(id, name)" + 
+                "INSERT INTO chronicles.traitcategories(id, name)" + 
                 "VALUES (@id, @name)" +
                 "ON DUPLICATE KEY UPDATE " + 
                 "id=@id, name=@name", Connection);

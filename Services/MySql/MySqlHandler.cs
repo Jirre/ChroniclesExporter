@@ -8,7 +8,7 @@ public class MySqlHandler
 {
     public static string Server { get; private set; } = "localhost";
     public static string Port { get; private set; } = "3306";
-    public static string Database { get; private set; } = "Chronicles";
+    public static string Database { get; private set; } = "chronicles";
     public static string UserId { get; set; } = "";
     public static string Password { get; set; } = "";
 
