@@ -26,6 +26,6 @@ public class SkillWriter : MySqlTableWriter<Skill>
         pCommand.Parameters[0].Value = pData.Id.ToByteArray(true);
         pCommand.Parameters[1].Value = pData.Name;
         pCommand.Parameters[2].Value = pData.Ability.ToString().ToLower();
-        pCommand.Parameters[3].Value = pData.Content == null ? null : MySqlHelper.EscapeString(pData.Content);
+        pCommand.Parameters[3].Value = pData.Content;
     }
 }

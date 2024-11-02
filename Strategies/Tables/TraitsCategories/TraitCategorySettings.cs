@@ -8,5 +8,6 @@ public class TraitCategorySettings : ISettings<TraitCategoryReader, TraitCategor
     public string FilePath => "Traits-Categories";
     public string Url => "/Traits?id={0}";
     public string LinkClasses => "link-trait-category tooltip tooltip-trait-category";
+    public string LinkIcon => "trait";
     public ETable[] Dependencies => [];
 }

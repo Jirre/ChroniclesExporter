@@ -2,6 +2,7 @@
 
 public enum ETable
 {
+    Actions,
     Classes,
     ClassFeatures,
     Conditions,

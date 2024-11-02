@@ -9,6 +9,7 @@ public interface ISettings
     string FilePath { get; }
     string Url { get; }
     string LinkClasses { get; }
+    string LinkIcon { get; }
     
     ETable[] Dependencies { get; }
     

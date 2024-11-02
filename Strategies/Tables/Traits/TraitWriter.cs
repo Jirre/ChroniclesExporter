@@ -26,6 +26,6 @@ public class TraitWriter : MySqlTableWriter<Trait>
         pCommand.Parameters[0].Value = pData.Id.ToByteArray(true);
         pCommand.Parameters[1].Value = pData.Name;
         pCommand.Parameters[2].Value = pData.Priority;
-        pCommand.Parameters[3].Value = pData.Content == null ? null : MySqlHelper.EscapeString(pData.Content);
+        pCommand.Parameters[3].Value = pData.Content;
     }
 }

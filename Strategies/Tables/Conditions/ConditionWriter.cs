@@ -24,6 +24,6 @@ public class ConditionWriter : MySqlTableWriter<Condition>
     {
         pCommand.Parameters[0].Value = pData.Id.ToByteArray(true);
         pCommand.Parameters[1].Value = pData.Name;
-        pCommand.Parameters[2].Value = pData.Content == null ? null : MySqlHelper.EscapeString(pData.Content);
+        pCommand.Parameters[2].Value = pData.Content;
     }
 }

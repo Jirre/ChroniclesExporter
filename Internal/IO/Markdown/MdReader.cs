@@ -3,14 +3,15 @@ using ChroniclesExporter.Log;
 using ChroniclesExporter.Settings;
 using ChroniclesExporter.Table;
 using ChroniclesExporter.Utility;
+using HtmlAgilityPack;
 using Markdig;
 
 namespace ChroniclesExporter.IO;
 
-public abstract class MdReader<T> : IReader
+public abstract partial class MdReader<T> : IReader
     where T : IRow
 {
-    private readonly MarkdownPipeline _pipeline = 
+    private readonly MarkdownPipeline _pipelineBuilder = 
         new MarkdownPipelineBuilder().UseSoftlineBreakAsHardlineBreak().Build();
     
     public int Progress { get; private set; }
@@ -53,11 +54,15 @@ public abstract class MdReader<T> : IReader
                 (string.IsNullOrWhiteSpace(line) && string.IsNullOrWhiteSpace(content)))
                 continue;
 
-            if (SanitizeMarkdown(line, out string output))
-                content += output + Environment.NewLine;
+            content += line + Environment.NewLine;
         }
 
-        row.Content = Markdown.ToHtml(content, _pipeline);
+        string html = Markdown.ToHtml(content, _pipelineBuilder);
+        HtmlDocument htmlDoc = new HtmlDocument();
+        htmlDoc.LoadHtml(html);
+        ModifyHtml(ref htmlDoc);
+        row.Content = htmlDoc.DocumentNode.OuterHtml;
+        
         entry.Row = row;
         Progress++;
     }
@@ -102,34 +107,68 @@ public abstract class MdReader<T> : IReader
 
     #endregion
 
-    #region --- Markdown Cleanup ---
-
-    private static bool SanitizeMarkdown(string pLine, out string pOutput)
+    private static void ModifyHtml(ref HtmlDocument pDoc)
     {
-        pOutput = MarkdownLinkToHtml(pLine);
-        return true;
+        AddLinkComponents(ref pDoc);
     }
 
-    private static string MarkdownLinkToHtml(string pMarkdown)
+    [GeneratedRegex(@".*\/[A-Za-z\-]+-([a-fA-F0-9]{32})(\?|$)")]
+    private static partial Regex UrlRegex();
+    
+    [GeneratedRegex(@"[A-Za-z]+%20([a-fA-F0-9]{32})\.md")]
+    private static partial Regex FileRegex();
+    private static void AddLinkComponents(ref HtmlDocument pDoc)
     {
-        Regex regex = StringUtility.MarkdownLinkRegex();
+        HtmlNodeCollection anchorNodes = pDoc.DocumentNode.SelectNodes("//a");
+        if (anchorNodes == null)
+            return;
         
-        return regex.Replace(pMarkdown, pMatch =>
+        foreach (HtmlNode node in anchorNodes)
         {
-            string text = pMatch.Groups["text"].Value;
-            string url = pMatch.Groups["url"].Value;
-            string title = pMatch.Groups["title"].Captures.Count > 0 ? pMatch.Groups["title"].Value : text;
-
-            if (StringUtility.TryExtractGuidFromString(url, out Guid guid) &&
-                TableHandler.TryGet(guid, out TableEntry table) &&
-                SettingsHandler.TryGetSettings(table.Id, out ISettings settings))
+            HtmlNode parent = node.ParentNode;
+            string href = node.GetAttributeValue("href", "");
+            if (TryMatch(UrlRegex(), href, out Match urlMatch))
             {
-                string classes = string.IsNullOrWhiteSpace(settings.LinkClasses) ? "" : $" class=\"{settings.LinkClasses}\"";
-                return $"<a href=\"{settings.Url}\"{classes}>{title}</a>";
+                HtmlNode link = pDoc.CreateElement("PageLink");
+                if (TableHandler.TryGet(new Guid(urlMatch.Groups[1].Value), out TableEntry entry) && 
+                    SettingsHandler.TryGetSettings(entry.Id, out ISettings settings))
+                {
+                    link.SetAttributeValue("target", 
+                        string.IsNullOrWhiteSpace(settings.Url) ? 
+                            urlMatch.Groups[1].Value : 
+                            string.Format(settings.Url, urlMatch.Groups[1].Value));
+                    link.SetAttributeValue("icon", settings.LinkIcon);
+                }
+                else
+                {
+                    link.SetAttributeValue("target", urlMatch.Groups[1].Value);
+                }
+                
+                link.InnerHtml = node.InnerHtml;
+                parent.ReplaceChild(link, node);
+                continue;
             }
-            return $"<a href=\"{url}\">{title}</a>";
-        });
+            if (TryMatch(FileRegex(), href, out Match localMatch))
+            {
+                HtmlNode link = pDoc.CreateElement("LocalLink");
+                link.SetAttributeValue("target", localMatch.Groups[1].Value);
+
+                if (TableHandler.TryGet(new Guid(localMatch.Groups[1].Value), out TableEntry entry) && 
+                    SettingsHandler.TryGetSettings(entry.Id, out ISettings settings))
+                {
+                    link.SetAttributeValue("icon", settings.LinkIcon);
+                }
+                
+                link.InnerHtml = node.InnerHtml;
+                parent.ReplaceChild(link, node);
+                continue;
+            }
+        }
     }
 
-    #endregion
+    private static bool TryMatch(Regex pRegex, string pValue, out Match pMatch)
+    {
+        pMatch = pRegex.Match(pValue);
+        return pMatch.Success;
+    }
 }
