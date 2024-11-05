@@ -41,7 +41,7 @@ public abstract class MySqlTableWriter<T> : MySqlWriter<IRow>, ITableWriter
 
     private async Task WaitForDependencies()
     {
-        if (!SettingsHandler.TryGetSettings(TableId, out ISettings settings) ||
+        if (!SettingsHandler.TryGetSettings<T>(TableId, out ISettings<T> settings) ||
             settings.Dependencies.Length == 0)
             return;
         

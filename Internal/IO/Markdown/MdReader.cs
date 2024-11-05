@@ -9,7 +9,7 @@ using Markdig;
 namespace ChroniclesExporter.IO;
 
 public abstract partial class MdReader<T> : IReader
-    where T : IRow
+    where T : class, IRow
 {
     private readonly MarkdownPipeline _pipelineBuilder = 
         new MarkdownPipelineBuilder().UseSoftlineBreakAsHardlineBreak().Build();
@@ -131,13 +131,14 @@ public abstract partial class MdReader<T> : IReader
             {
                 HtmlNode link = pDoc.CreateElement("PageLink");
                 if (TableHandler.TryGet(new Guid(urlMatch.Groups[1].Value), out TableEntry entry) && 
-                    SettingsHandler.TryGetSettings(entry.Id, out ISettings settings))
+                    SettingsHandler.TryGetSettings<T>(entry.Id, out ISettings<T> settings) &&
+                    entry.Row is T rowData)
                 {
                     link.SetAttributeValue("target", 
-                        string.IsNullOrWhiteSpace(settings.Url) ? 
+                        string.IsNullOrWhiteSpace(settings.Url(rowData)) ? 
                             urlMatch.Groups[1].Value : 
-                            string.Format(settings.Url, urlMatch.Groups[1].Value));
-                    link.SetAttributeValue("icon", settings.LinkIcon);
+                            string.Format(settings.Url(rowData), urlMatch.Groups[1].Value));
+                    link.SetAttributeValue("icon", settings.LinkIcon(rowData));
                 }
                 else
                 {
@@ -154,9 +155,10 @@ public abstract partial class MdReader<T> : IReader
                 link.SetAttributeValue("target", localMatch.Groups[1].Value);
 
                 if (TableHandler.TryGet(new Guid(localMatch.Groups[1].Value), out TableEntry entry) && 
-                    SettingsHandler.TryGetSettings(entry.Id, out ISettings settings))
+                    SettingsHandler.TryGetSettings<T>(entry.Id, out ISettings<T> settings) &&
+                    entry.Row is T rowData)
                 {
-                    link.SetAttributeValue("icon", settings.LinkIcon);
+                    link.SetAttributeValue("icon", settings.LinkIcon(rowData));
                 }
                 
                 link.InnerHtml = node.InnerHtml;
