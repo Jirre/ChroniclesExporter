@@ -1,5 +1,5 @@
-﻿using ChroniclesExporter.Internal.StateMachine;
-using ChroniclesExporter.Database;
+﻿using ChroniclesExporter.Database;
+using ChroniclesExporter.Internal.StateMachine;
 using ChroniclesExporter.Settings;
 using ChroniclesExporter.StateMachine;
 using ChroniclesExporter.Table;
@@ -8,7 +8,7 @@ using Spectre.Console;
 
 namespace ChroniclesExporter.States;
 
-public class IndexState(StateMachine<EProgramState> pStateMachine, EProgramState pId) : 
+public class IndexState(StateMachine<EProgramState> pStateMachine, EProgramState pId) :
     StateBehaviour<EProgramState>(pStateMachine, pId)
 {
     public override void Update()
@@ -17,41 +17,37 @@ public class IndexState(StateMachine<EProgramState> pStateMachine, EProgramState
         DbHandler.Load();
         string[] files = Directory.GetFiles(FileUtility.GetDataRoot(), "*.md", SearchOption.AllDirectories);
         foreach (string file in files)
-        {
             if (FileUtility.TryGetTypeFromPath(file, out ETable table))
-            {
                 TableHandler.Register(file, table);
-            }
-        }
-        
+
         DrawHeader();
         DrawIndexBreakdown(files.Length);
         DrawIndexTable();
-        
+
         StateMachine.Goto(EProgramState.MdRead);
     }
 
     private static void DrawHeader()
     {
-        Rule header = new Rule("[blue]Indexing[/]")
+        Rule header = new("[blue]Indexing[/]")
         {
             Justification = Justify.Left
         };
         AnsiConsole.Write(header);
     }
-    
+
     private static void DrawIndexBreakdown(int pFileCount)
     {
-        BreakdownChart chart = new BreakdownChart();
+        BreakdownChart chart = new();
         chart.AddItem("Indexed", TableHandler.Count, Color.Green);
         chart.AddItem("Un-Indexed", pFileCount - TableHandler.Count, Color.Grey);
         chart.Width(32);
         AnsiConsole.Write(new Panel(chart));
     }
-    
+
     private static void DrawIndexTable()
     {
-        Spectre.Console.Table table = new Spectre.Console.Table();
+        Spectre.Console.Table table = new();
         table.AddColumn("Type");
         table.AddColumn("Indexed Amount");
         table.AddRow("Settings", SettingsHandler.Count.ToString());

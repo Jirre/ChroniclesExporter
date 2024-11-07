@@ -3,7 +3,7 @@
 public static class ConsoleUtility
 {
     /// <summary>
-    /// Prints a confirmation prompt to the console
+    ///     Prints a confirmation prompt to the console
     /// </summary>
     /// <param name="pMessage">String message to print preceding the prompt</param>
     public static bool ConfirmPrompt(string pMessage)
@@ -14,13 +14,14 @@ public static class ConsoleUtility
         {
             response = Console.ReadKey(true).Key;
         } while (response != ConsoleKey.Y && response != ConsoleKey.N);
+
         return response == ConsoleKey.Y;
     }
 
     #region --- Marked Lines ---
 
     /// <summary>
-    /// Writes a marked string to the console
+    ///     Writes a marked string to the console
     /// </summary>
     public static void WriteMarked(string pMessage, EConsoleMark pMark)
     {
@@ -31,9 +32,9 @@ public static class ConsoleUtility
         Console.ForegroundColor = color;
         Console.Write($"] {pMessage}");
     }
-    
+
     /// <summary>
-    /// Writes a marked line to the console
+    ///     Writes a marked line to the console
     /// </summary>
     public static void WriteMarkedLine(string pMessage, EConsoleMark pMark)
     {
@@ -52,7 +53,7 @@ public static class ConsoleUtility
             _ => throw new ArgumentOutOfRangeException($"No Mark defined for [{pMark}]")
         };
     }
-    
+
     private static ConsoleColor GetMarkColor(EConsoleMark pMark)
     {
         return pMark switch

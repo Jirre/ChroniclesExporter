@@ -18,14 +18,16 @@ public class SkillReader : MdReader<Skill>
                 return true;
             }
         }
+
         if (pLine.StartsWith("Traits:"))
         {
             GetGuids(pLine, ref pData);
             return true;
         }
+
         return false;
     }
-    
+
     private static void GetGuids(string pLine, ref Skill pContainer)
     {
         pLine = pLine.TrimStart("Traits:");

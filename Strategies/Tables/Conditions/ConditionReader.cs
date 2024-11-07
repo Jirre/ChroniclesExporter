@@ -14,9 +14,10 @@ public class ConditionReader : MdReader<Condition>
             GetGuids(pLine, ref pData);
             return true;
         }
+
         return false;
     }
-    
+
     private static void GetGuids(string pLine, ref Condition pContainer)
     {
         pLine = pLine.TrimStart("Traits:");

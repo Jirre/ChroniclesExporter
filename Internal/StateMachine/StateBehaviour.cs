@@ -6,16 +6,23 @@ public abstract class StateBehaviour<E>(StateMachine<E> pStateMachine, E pId) : 
     where E : Enum
 {
     /// <summary>
-    /// Parent State-Machine
+    ///     Parent State-Machine
     /// </summary>
     protected StateMachine<E> StateMachine { get; } = pStateMachine;
+
     /// <inheritdoc />
     public E Id { get; } = pId;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public abstract void Update();
-    /// <inheritdoc/>
-    public virtual void Activate() { }
-    /// <inheritdoc/>
-    public virtual void Deactivate() { }
+
+    /// <inheritdoc />
+    public virtual void Activate()
+    {
+    }
+
+    /// <inheritdoc />
+    public virtual void Deactivate()
+    {
+    }
 }

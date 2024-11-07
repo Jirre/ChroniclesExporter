@@ -3,14 +3,14 @@
 public enum EProgramState
 {
     Init,
-    MySqlLogin,
-    MySqlTest,
-    
+    DbLogin,
+    DbTest,
+
     Index,
     MdRead,
-    MySqlWrite,
-    MySqlLink,
-    
+    DbWrite,
+    DbLink,
+
     Log,
-    Complete,
+    Complete
 }

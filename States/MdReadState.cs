@@ -7,24 +7,24 @@ using Spectre.Console;
 
 namespace ChroniclesExporter.States;
 
-public class MdReadState(StateMachine<EProgramState> pStateMachine, EProgramState pId) : 
+public class MdReadState(StateMachine<EProgramState> pStateMachine, EProgramState pId) :
     AProgressState<ETable, IReader>(pStateMachine, pId)
 {
-    protected override EProgramState DefaultCompleteState => EProgramState.MySqlWrite;
+    protected override EProgramState DefaultCompleteState => EProgramState.DbWrite;
     protected override ELogCode DefaultErrorCode => ELogCode.MdReaderError;
-    
+
     protected override List<Task> BuildHandlers()
     {
-        Dictionary<ETable, List<string>> files = new Dictionary<ETable, List<string>>();
+        Dictionary<ETable, List<string>> files = new();
         foreach (TableEntry table in TableHandler.Entries)
         {
             if (!files.ContainsKey(table.Id))
                 files.Add(table.Id, new List<string>());
-            
+
             files[table.Id].Add(table.Path);
         }
-        
-        List<Task> tasks = new List<Task>();
+
+        List<Task> tasks = new();
         foreach (KeyValuePair<ETable, List<string>> kvp in files)
         {
             if (!SettingsHandler.TryGetSettings(kvp.Key, out ISettings settings))
@@ -37,10 +37,10 @@ public class MdReadState(StateMachine<EProgramState> pStateMachine, EProgramStat
 
         return tasks;
     }
-    
+
     protected override void OnHeaderDraw()
     {
-        Rule header = new Rule("[blue]Reading Markdown Files[/]")
+        Rule header = new("[blue]Reading Markdown Files[/]")
         {
             Justification = Justify.Left
         };

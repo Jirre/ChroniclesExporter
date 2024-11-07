@@ -9,5 +9,8 @@ public readonly struct LogEntry(EConsoleMark pMark, ELogCode pCode, string pCont
     public string Context { get; } = pContext;
     public DateTime Time { get; } = DateTime.Now;
 
-    public override string ToString() => $"[{Time:HH:mm:ss zz} {Code.ToString()}; {Context}]";
+    public override string ToString()
+    {
+        return $"[{Time:HH:mm:ss zz} {Code.ToString()}; {Context}]";
+    }
 }

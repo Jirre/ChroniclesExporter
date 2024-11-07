@@ -1,18 +1,17 @@
-﻿using ChroniclesExporter.Internal.StateMachine;
-using ChroniclesExporter.Database;
+﻿using ChroniclesExporter.Database;
+using ChroniclesExporter.Internal.StateMachine;
 using ChroniclesExporter.StateMachine;
 using ChroniclesExporter.Utility;
-using MySqlConnector;
 using Npgsql;
 using Spectre.Console;
 
 namespace ChroniclesExporter.States;
 
-public class DbTestState(StateMachine<EProgramState> pStateMachine, EProgramState pId) : 
+public class DbTestState(StateMachine<EProgramState> pStateMachine, EProgramState pId) :
     StateBehaviour<EProgramState>(pStateMachine, pId)
 {
-    private Task? _task;
     private int _outputCode;
+    private Task? _task;
 
     public override void Activate()
     {
@@ -24,7 +23,9 @@ public class DbTestState(StateMachine<EProgramState> pStateMachine, EProgramStat
             pContext.Spinner(Spinner.Known.Dots);
             pContext.SpinnerStyle(Style.Parse("blue"));
 
-            while (!_task.IsCompleted) {}
+            while (!_task.IsCompleted)
+            {
+            }
         });
     }
 
@@ -41,9 +42,10 @@ public class DbTestState(StateMachine<EProgramState> pStateMachine, EProgramStat
             StateMachine.Goto(EProgramState.Index);
             return;
         }
+
         Console.CursorVisible = true;
         StateMachine.Goto(ConsoleUtility.ConfirmPrompt("Change Login Credentials?")
-            ? EProgramState.MySqlLogin
+            ? EProgramState.DbLogin
             : EProgramState.Log);
     }
 
@@ -55,7 +57,7 @@ public class DbTestState(StateMachine<EProgramState> pStateMachine, EProgramStat
             1042 => "Database Test Failed: Connection failed",
             1045 => "Database Test Failed: Login Credentials invalid",
             1049 => "Database Test Failed: Database credentials invalid",
-            _ => $"Uncaught MySql Error({_outputCode})"
+            _ => $"Uncaught Database Error({_outputCode})"
         };
     }
 
@@ -65,12 +67,12 @@ public class DbTestState(StateMachine<EProgramState> pStateMachine, EProgramStat
 
         try
         {
-            NpgsqlConnection connection = await DbHandler.DataSource.OpenConnectionAsync(); 
+            NpgsqlConnection connection = await DbHandler.DataSource.OpenConnectionAsync();
             await connection.OpenAsync();
         }
-        catch (MySqlException e)
+        catch (NpgsqlException e)
         {
-            _outputCode = e.Number;
+            _outputCode = e.ErrorCode;
         }
     }
 }

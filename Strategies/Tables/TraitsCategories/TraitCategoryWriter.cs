@@ -1,30 +1,17 @@
-﻿using ChroniclesExporter.Database;
-using ChroniclesExporter.IO.Database;
-using MySqlConnector;
+﻿using ChroniclesExporter.IO.Database;
 using Npgsql;
-using NpgsqlTypes;
 
 namespace ChroniclesExporter.Strategy.TraitCategories;
 
 public class TraitCategoryWriter : DbTableWriter<TraitCategory>
 {
     public override ETable TableId => ETable.TraitCategories;
-    protected override NpgsqlCommand BuildCommand()
-    {
-        NpgsqlCommand command = DbHandler.DataSource.CreateCommand(
-                "INSERT INTO chronicles.traitcategories(id, name)" + 
-                "VALUES (@id, @name)" +
-                "ON DUPLICATE KEY UPDATE " + 
-                "id=@id, name=@name");
+    protected override string TableName => "traitcategories";
+    protected override string[] Fields => new[] {"id", "name"};
 
-        command.Parameters.Add("@id", NpgsqlDbType.Uuid);
-        command.Parameters.Add("@name", NpgsqlDbType.Varchar, byte.MaxValue);
-        return command;
-    }
-
-    protected override void FillCommand(NpgsqlCommand pCommand, TraitCategory pData)
+    protected override async Task ImportRow(NpgsqlBinaryImporter pImporter, TraitCategory pData)
     {
-        pCommand.Parameters[0].Value = pData.Id.ToByteArray(true);
-        pCommand.Parameters[1].Value = pData.Name;
+        await pImporter.WriteAsync(pData.Id.ToByteArray(true));
+        await pImporter.WriteAsync(pData.Name);
     }
 }

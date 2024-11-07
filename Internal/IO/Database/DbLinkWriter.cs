@@ -6,7 +6,7 @@ using Npgsql;
 namespace ChroniclesExporter.IO.Database;
 
 /// <summary>
-/// Interface used as flag in search through reflection
+///     Interface used as flag in search through reflection
 /// </summary>
 public interface ILinkWriter;
 
@@ -15,33 +15,45 @@ public abstract class DbLinkWriter<T> : DbWriter<ILink>, ILinkWriter
 {
     public abstract ELink LinkId { get; }
     public sealed override Enum Id => LinkId;
-    
+
+    protected abstract string TableName { get; }
+    protected abstract string[] Fields { get; }
+
     protected override async Task WriteAsync(ILink[] pQueries)
     {
         try
         {
             await using NpgsqlConnection connection = DbHandler.DataSource.CreateConnection();
             await connection.OpenAsync();
-            await using NpgsqlCommand command = BuildCommand();
-            await command.PrepareAsync();
+
+            NpgsqlCommand truncate = connection.CreateCommand();
+            truncate.CommandText = $"TRUNCATE TABLE {TableName} CASCADE";
+            await truncate.ExecuteNonQueryAsync();
+
+            string fields = "";
+            foreach (string field in Fields) fields += field + ", ";
+            fields = fields.Trim(' ', ',');
+
+            await using NpgsqlBinaryImporter importer = await connection.BeginBinaryImportAsync(
+                $"COPY {TableName} ({fields}) FROM STDIN (FORMAT BINARY)");
             foreach (ILink query in pQueries)
             {
-                FillCommand(command, (T)query);
-                await command.ExecuteNonQueryAsync();
+                await importer.StartRowAsync();
+                await ImportRow(importer, (T) query);
                 ++Progress;
             }
+
+            await importer.CompleteAsync();
         }
         catch (NpgsqlException ex)
         {
             LogHandler.Error(ELogCode.MySqlError, ex.ToString());
         }
     }
-    
-    protected abstract NpgsqlCommand BuildCommand();
 
-    protected virtual void FillCommand(NpgsqlCommand pCommand, T pData)
+    protected virtual async Task ImportRow(NpgsqlBinaryImporter pImporter, T pData)
     {
-        pCommand.Parameters[0].Value = pData.Source.ToByteArray(true);
-        pCommand.Parameters[1].Value = pData.Target.ToByteArray(true);
+        await pImporter.WriteAsync(pData.Source.ToByteArray(true));
+        await pImporter.WriteAsync(pData.Target.ToByteArray(true));
     }
 }

@@ -8,7 +8,7 @@ public interface ISettings
 {
     string FilePath { get; }
     ETable[] Dependencies { get; }
-    
+
     Type Reader { get; }
     Type Writer { get; }
 }
