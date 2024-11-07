@@ -8,13 +8,11 @@ public static partial class StringUtility
 {
     [GeneratedRegex("[0-9a-fA-F]{32}")]
     private static partial Regex UrlGuidRegex();
+
     public static bool TryExtractGuidFromString(string pUrl, out Guid pGuid)
     {
         pGuid = Guid.Empty;
-        if (string.IsNullOrEmpty(pUrl))
-        {
-            return false; // Handle empty or null URL
-        }
+        if (string.IsNullOrEmpty(pUrl)) return false; // Handle empty or null URL
 
         // Use negative lookbehind to exclude "%20" before the 32 hex characters
         Regex regex = UrlGuidRegex();
@@ -30,10 +28,11 @@ public static partial class StringUtility
 
     [GeneratedRegex(@"\[(?<text>.+?)\]\s*:\s*(?<url>\S+)(?:\s+""(?<title>.+?)"")?", RegexOptions.Compiled)]
     public static partial Regex MarkdownLinkRegex();
+
     public static string MarkdownLinkToHtml(string pMarkdown)
     {
         Regex regex = MarkdownLinkRegex();
-        
+
         return regex.Replace(pMarkdown, pMatch =>
         {
             string text = pMatch.Groups["text"].Value;
@@ -46,15 +45,13 @@ public static partial class StringUtility
 
     public static string TrimStart(this string pValue, string pSubstring)
     {
-        return pValue.StartsWith(pSubstring) ? 
-            pValue.Remove(0, pSubstring.Length).TrimStart(' ') : 
-            pValue;
+        return pValue.StartsWith(pSubstring) ? pValue.Remove(0, pSubstring.Length).TrimStart(' ') : pValue;
     }
-    
+
     public static string TrimStart(this string pValue, string pSubstring, bool pIgnoreCase, CultureInfo? pCultureInfo)
     {
-        return pValue.StartsWith(pSubstring, pIgnoreCase, pCultureInfo) ? 
-            pValue.Remove(0, pSubstring.Length).TrimStart(' ') : 
-            pValue;
+        return pValue.StartsWith(pSubstring, pIgnoreCase, pCultureInfo)
+            ? pValue.Remove(0, pSubstring.Length).TrimStart(' ')
+            : pValue;
     }
 }

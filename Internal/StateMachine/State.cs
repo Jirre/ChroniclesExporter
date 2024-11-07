@@ -4,16 +4,26 @@ public class State<E>(StateMachine<E> pStateMachine, E pId, Action pUpdate) : IS
     where E : Enum
 {
     /// <summary>
-    /// Parent State-Machine
+    ///     Parent State-Machine
     /// </summary>
     protected StateMachine<E> StateMachine { get; } = pStateMachine;
+
     /// <inheritdoc />
     public E Id { get; } = pId;
-    
+
     /// <inheritdoc />
-    public void Update() => pUpdate.Invoke();
+    public void Update()
+    {
+        pUpdate.Invoke();
+    }
+
     /// <inheritdoc />
-    public void Activate() { }
+    public void Activate()
+    {
+    }
+
     /// <inheritdoc />
-    public void Deactivate() { }
+    public void Deactivate()
+    {
+    }
 }

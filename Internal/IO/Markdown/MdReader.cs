@@ -11,22 +11,20 @@ namespace ChroniclesExporter.IO;
 public abstract partial class MdReader<T> : IReader
     where T : class, IRow
 {
-    private readonly MarkdownPipeline _pipelineBuilder = 
+    private readonly MarkdownPipeline _pipelineBuilder =
         new MarkdownPipelineBuilder().UseSoftlineBreakAsHardlineBreak().Build();
-    
+
     public int Progress { get; private set; }
     public int TaskCount { get; private set; }
-    
-    /// <inheritdoc/>
+
+    /// <inheritdoc />
     public Task Read(string[] pFiles)
     {
-        List<Task> tasks = new List<Task>();
+        List<Task> tasks = new();
         foreach (string file in pFiles)
-        {
             if (!File.Exists(file))
                 LogHandler.Warning(ELogCode.FileNotFound, $"Path: {file}");
             else tasks.Add(ReadFile(file));
-        }
         TaskCount = tasks.Count;
         return Task.WhenAll(tasks);
     }
@@ -40,7 +38,7 @@ public abstract partial class MdReader<T> : IReader
 
         if (!TableHandler.TryGet(id, out TableEntry entry))
             return;
-        
+
         row.Id = id;
         string content = "";
         for (int i = 0; i < lines.Length; i++)
@@ -58,13 +56,79 @@ public abstract partial class MdReader<T> : IReader
         }
 
         string html = Markdown.ToHtml(content, _pipelineBuilder);
-        HtmlDocument htmlDoc = new HtmlDocument();
+        HtmlDocument htmlDoc = new();
         htmlDoc.LoadHtml(html);
         ModifyHtml(ref htmlDoc);
         row.Content = htmlDoc.DocumentNode.OuterHtml;
-        
+
         entry.Row = row;
         Progress++;
+    }
+
+    private static void ModifyHtml(ref HtmlDocument pDoc)
+    {
+        AddLinkComponents(ref pDoc);
+    }
+
+    [GeneratedRegex(@".*\/[A-Za-z\-]+-([a-fA-F0-9]{32})(\?|$)")]
+    private static partial Regex UrlRegex();
+
+    [GeneratedRegex(@"[A-Za-z]+%20([a-fA-F0-9]{32})\.md")]
+    private static partial Regex FileRegex();
+
+    private static void AddLinkComponents(ref HtmlDocument pDoc)
+    {
+        HtmlNodeCollection anchorNodes = pDoc.DocumentNode.SelectNodes("//a");
+        if (anchorNodes == null)
+            return;
+
+        foreach (HtmlNode node in anchorNodes)
+        {
+            HtmlNode parent = node.ParentNode;
+            string href = node.GetAttributeValue("href", "");
+            if (TryMatch(UrlRegex(), href, out Match urlMatch))
+            {
+                HtmlNode link = pDoc.CreateElement("PageLink");
+                if (TableHandler.TryGet(new Guid(urlMatch.Groups[1].Value), out TableEntry entry) &&
+                    SettingsHandler.TryGetSettings<T>(entry.Id, out ISettings<T> settings) &&
+                    entry.Row is T rowData)
+                {
+                    link.SetAttributeValue("target",
+                        string.IsNullOrWhiteSpace(settings.Url(rowData))
+                            ? urlMatch.Groups[1].Value
+                            : string.Format(settings.Url(rowData), urlMatch.Groups[1].Value));
+                    link.SetAttributeValue("icon", settings.LinkIcon(rowData));
+                }
+                else
+                {
+                    link.SetAttributeValue("target", urlMatch.Groups[1].Value);
+                }
+
+                link.InnerHtml = node.InnerHtml;
+                parent.ReplaceChild(link, node);
+                continue;
+            }
+
+            if (TryMatch(FileRegex(), href, out Match localMatch))
+            {
+                HtmlNode link = pDoc.CreateElement("LocalLink");
+                link.SetAttributeValue("target", localMatch.Groups[1].Value);
+
+                if (TableHandler.TryGet(new Guid(localMatch.Groups[1].Value), out TableEntry entry) &&
+                    SettingsHandler.TryGetSettings<T>(entry.Id, out ISettings<T> settings) &&
+                    entry.Row is T rowData)
+                    link.SetAttributeValue("icon", settings.LinkIcon(rowData));
+
+                link.InnerHtml = node.InnerHtml;
+                parent.ReplaceChild(link, node);
+            }
+        }
+    }
+
+    private static bool TryMatch(Regex pRegex, string pValue, out Match pMatch)
+    {
+        pMatch = pRegex.Match(pValue);
+        return pMatch.Success;
     }
 
     #region --- Properties ---
@@ -79,7 +143,10 @@ public abstract partial class MdReader<T> : IReader
         return true;
     }
 
-    protected virtual bool TryGetProperties(string pLine, ref T pData) => false;
+    protected virtual bool TryGetProperties(string pLine, ref T pData)
+    {
+        return false;
+    }
 
     #endregion
 
@@ -106,71 +173,4 @@ public abstract partial class MdReader<T> : IReader
     }
 
     #endregion
-
-    private static void ModifyHtml(ref HtmlDocument pDoc)
-    {
-        AddLinkComponents(ref pDoc);
-    }
-
-    [GeneratedRegex(@".*\/[A-Za-z\-]+-([a-fA-F0-9]{32})(\?|$)")]
-    private static partial Regex UrlRegex();
-    
-    [GeneratedRegex(@"[A-Za-z]+%20([a-fA-F0-9]{32})\.md")]
-    private static partial Regex FileRegex();
-    private static void AddLinkComponents(ref HtmlDocument pDoc)
-    {
-        HtmlNodeCollection anchorNodes = pDoc.DocumentNode.SelectNodes("//a");
-        if (anchorNodes == null)
-            return;
-        
-        foreach (HtmlNode node in anchorNodes)
-        {
-            HtmlNode parent = node.ParentNode;
-            string href = node.GetAttributeValue("href", "");
-            if (TryMatch(UrlRegex(), href, out Match urlMatch))
-            {
-                HtmlNode link = pDoc.CreateElement("PageLink");
-                if (TableHandler.TryGet(new Guid(urlMatch.Groups[1].Value), out TableEntry entry) && 
-                    SettingsHandler.TryGetSettings<T>(entry.Id, out ISettings<T> settings) &&
-                    entry.Row is T rowData)
-                {
-                    link.SetAttributeValue("target", 
-                        string.IsNullOrWhiteSpace(settings.Url(rowData)) ? 
-                            urlMatch.Groups[1].Value : 
-                            string.Format(settings.Url(rowData), urlMatch.Groups[1].Value));
-                    link.SetAttributeValue("icon", settings.LinkIcon(rowData));
-                }
-                else
-                {
-                    link.SetAttributeValue("target", urlMatch.Groups[1].Value);
-                }
-                
-                link.InnerHtml = node.InnerHtml;
-                parent.ReplaceChild(link, node);
-                continue;
-            }
-            if (TryMatch(FileRegex(), href, out Match localMatch))
-            {
-                HtmlNode link = pDoc.CreateElement("LocalLink");
-                link.SetAttributeValue("target", localMatch.Groups[1].Value);
-
-                if (TableHandler.TryGet(new Guid(localMatch.Groups[1].Value), out TableEntry entry) && 
-                    SettingsHandler.TryGetSettings<T>(entry.Id, out ISettings<T> settings) &&
-                    entry.Row is T rowData)
-                {
-                    link.SetAttributeValue("icon", settings.LinkIcon(rowData));
-                }
-                
-                link.InnerHtml = node.InnerHtml;
-                parent.ReplaceChild(link, node);
-                continue;
-            }
-        }
-    }
-
-    private static bool TryMatch(Regex pRegex, string pValue, out Match pMatch)
-    {
-        pMatch = pRegex.Match(pValue);
-        return pMatch.Success;
-    }
 }

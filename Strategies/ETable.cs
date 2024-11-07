@@ -13,5 +13,5 @@ public enum ETable
     Skills,
     Subclasses,
     TraitCategories,
-    Traits,
+    Traits
 }

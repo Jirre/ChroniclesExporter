@@ -1,28 +1,17 @@
-﻿using ChroniclesExporter.IO.MySql;
-using MySqlConnector;
+﻿using ChroniclesExporter.IO.Database;
+using Npgsql;
 
 namespace ChroniclesExporter.Strategy.TraitCategories;
 
-public class TraitCategoryWriter : MySqlTableWriter<TraitCategory>
+public class TraitCategoryWriter : DbTableWriter<TraitCategory>
 {
     public override ETable TableId => ETable.TraitCategories;
-    protected override MySqlCommand BuildCommand()
-    {
-        MySqlCommand command =
-            new MySqlCommand(
-                "INSERT INTO chronicles.traitcategories(id, name)" + 
-                "VALUES (@id, @name)" +
-                "ON DUPLICATE KEY UPDATE " + 
-                "id=@id, name=@name", Connection);
+    protected override string TableName => "traitcategories";
+    protected override string[] Fields => new[] {"id", "name"};
 
-        command.Parameters.Add(new MySqlParameter("@id", MySqlDbType.Binary, 16));
-        command.Parameters.Add(new MySqlParameter("@name", MySqlDbType.VarChar, byte.MaxValue));
-        return command;
-    }
-
-    protected override void FillCommand(MySqlCommand pCommand, TraitCategory pData)
+    protected override async Task ImportRow(NpgsqlBinaryImporter pImporter, TraitCategory pData)
     {
-        pCommand.Parameters[0].Value = pData.Id.ToByteArray(true);
-        pCommand.Parameters[1].Value = pData.Name;
+        await pImporter.WriteAsync(pData.Id.ToByteArray(true));
+        await pImporter.WriteAsync(pData.Name);
     }
 }

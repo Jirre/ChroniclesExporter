@@ -3,7 +3,7 @@
 public interface IWriter : ITaskHandler
 {
     /// <summary>
-    /// Write all files currently stored in the MySqlHandler
+    ///     Write all files currently stored in the MySqlHandler
     /// </summary>
     Task Write();
 }

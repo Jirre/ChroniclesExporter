@@ -8,31 +8,27 @@ public static class TypeUtility
     {
         Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-        List<Type> types = new List<Type>();
+        List<Type> types = new();
         foreach (Assembly assembly in assemblies)
-        {
             types.AddRange(assembly.GetTypes().Where(pType => pType.IsDefined(pAttribute)));
-        }
 
         return types.ToArray();
     }
 
     /// <summary>
-    /// Get all types that inherit from a provided parent type that are not by itself an interface or abstract
+    ///     Get all types that inherit from a provided parent type that are not by itself an interface or abstract
     /// </summary>
     public static Type[] GetTypesBasedOnAbstractParent(Type pAbstractParent)
     {
         Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-        List<Type> types = new List<Type>();
+        List<Type> types = new();
         foreach (Assembly assembly in assemblies)
-        {
             types.AddRange(assembly.GetTypes().Where(
-                pType => 
+                pType =>
                     pType.IsClass &&
                     pType is {IsAbstract: false, IsInterface: false} &&
                     pAbstractParent.IsAssignableFrom(pType)));
-        }
 
         return types.ToArray();
     }

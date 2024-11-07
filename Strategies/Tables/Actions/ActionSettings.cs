@@ -6,8 +6,16 @@ namespace ChroniclesExporter.Strategy.Actions;
 public class ActionSettings : ISettings<Action, ActionReader, ActionWriter>
 {
     public string FilePath => "Actions";
-    public string Url(Action pAction) => "/Actions?id={0}";
-    public string LinkClasses(Action pAction) => "link-action tooltip tooltip-action";
+
+    public string Url(Action pAction)
+    {
+        return "/Actions?id={0}";
+    }
+
+    public string LinkClasses(Action pAction)
+    {
+        return "link-action tooltip tooltip-action";
+    }
 
     public string LinkIcon(Action pAction)
     {
@@ -21,5 +29,6 @@ public class ActionSettings : ISettings<Action, ActionReader, ActionWriter>
             _ => throw new ArgumentOutOfRangeException(nameof(pAction), pAction, null)
         };
     }
+
     public ETable[] Dependencies => [];
 }

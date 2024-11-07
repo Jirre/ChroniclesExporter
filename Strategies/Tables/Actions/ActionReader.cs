@@ -7,10 +7,7 @@ public class ActionReader : MdReader<Action>
 {
     protected override bool TryGetProperties(string pLine, ref Action pData)
     {
-        if (TryGetDetails(pLine, ref pData))
-        {
-            return true;
-        }
+        if (TryGetDetails(pLine, ref pData)) return true;
         if (pLine.StartsWith("Type:"))
         {
             pLine = pLine.TrimStart("Type:").Trim();
@@ -20,9 +17,10 @@ public class ActionReader : MdReader<Action>
                 return true;
             }
         }
+
         return false;
     }
-    
+
     private static bool TryGetDetails(string pLine, ref Action pData)
     {
         if (!pLine.StartsWith("Details:") ||

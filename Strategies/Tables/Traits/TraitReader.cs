@@ -14,7 +14,7 @@ public class TraitReader : MdReader<Trait>
             GetGuids(pLine, ref pData);
             return true;
         }
-        
+
         if (pLine.StartsWith("Index:"))
         {
             GetPriority(pLine, ref pData);
@@ -23,7 +23,7 @@ public class TraitReader : MdReader<Trait>
 
         return false;
     }
-    
+
     private static void GetGuids(string pLine, ref Trait pContainer)
     {
         pLine = pLine.TrimStart("Trait Categories:");

@@ -1,29 +1,31 @@
-﻿using ChroniclesExporter.Internal.StateMachine;
-using ChroniclesExporter.MySql;
+﻿using ChroniclesExporter.Database;
+using ChroniclesExporter.Internal.StateMachine;
 using ChroniclesExporter.StateMachine;
 using ChroniclesExporter.Utility;
-using MySqlConnector;
+using Npgsql;
 using Spectre.Console;
 
 namespace ChroniclesExporter.States;
 
-public class MySqlTestState(StateMachine<EProgramState> pStateMachine, EProgramState pId) : 
+public class DbTestState(StateMachine<EProgramState> pStateMachine, EProgramState pId) :
     StateBehaviour<EProgramState>(pStateMachine, pId)
 {
-    private Task? _task;
     private int _outputCode;
+    private Task? _task;
 
     public override void Activate()
     {
         base.Activate();
         _task = TestConnectionAsync();
 
-        AnsiConsole.Status().Start("Testing MySql Connection", pContext =>
+        AnsiConsole.Status().Start("Testing Database Connection", pContext =>
         {
             pContext.Spinner(Spinner.Known.Dots);
             pContext.SpinnerStyle(Style.Parse("blue"));
 
-            while (!_task.IsCompleted) {}
+            while (!_task.IsCompleted)
+            {
+            }
         });
     }
 
@@ -40,9 +42,10 @@ public class MySqlTestState(StateMachine<EProgramState> pStateMachine, EProgramS
             StateMachine.Goto(EProgramState.Index);
             return;
         }
+
         Console.CursorVisible = true;
         StateMachine.Goto(ConsoleUtility.ConfirmPrompt("Change Login Credentials?")
-            ? EProgramState.MySqlLogin
+            ? EProgramState.DbLogin
             : EProgramState.Log);
     }
 
@@ -50,29 +53,26 @@ public class MySqlTestState(StateMachine<EProgramState> pStateMachine, EProgramS
     {
         return _outputCode switch
         {
-            0 => "MySql Test Successful",
-            1042 => "MySql Test Failed: Connection failed",
-            1045 => "MySql Test Failed: Login Credentials invalid",
-            1049 => "MySql Test Failed: Database credentials invalid",
-            _ => $"Uncaught MySql Error({_outputCode})"
+            0 => "Database Test Successful",
+            1042 => "Database Test Failed: Connection failed",
+            1045 => "Database Test Failed: Login Credentials invalid",
+            1049 => "Database Test Failed: Database credentials invalid",
+            _ => $"Uncaught Database Error({_outputCode})"
         };
     }
 
     private async Task TestConnectionAsync()
     {
-        await using MySqlConnection connection = new MySqlConnection($"server={MySqlHandler.Server};" +
-                                                                     $"port={MySqlHandler.Port};" +
-                                                                     $"database={MySqlHandler.Database};" +
-                                                                     $"user={MySqlHandler.UserId};" +
-                                                                     $"password={MySqlHandler.Password}");
+        DbHandler.Setup();
 
         try
         {
+            NpgsqlConnection connection = await DbHandler.DataSource.OpenConnectionAsync();
             await connection.OpenAsync();
         }
-        catch (MySqlException e)
+        catch (NpgsqlException e)
         {
-            _outputCode = e.Number;
+            _outputCode = e.ErrorCode;
         }
     }
 }

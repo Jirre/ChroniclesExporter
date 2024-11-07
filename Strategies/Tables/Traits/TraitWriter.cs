@@ -1,31 +1,19 @@
-﻿using ChroniclesExporter.IO.MySql;
-using MySqlConnector;
+﻿using ChroniclesExporter.IO.Database;
+using Npgsql;
 
 namespace ChroniclesExporter.Strategy.Traits;
 
-public class TraitWriter : MySqlTableWriter<Trait>
+public class TraitWriter : DbTableWriter<Trait>
 {
     public override ETable TableId => ETable.Traits;
-    protected override MySqlCommand BuildCommand()
-    {
-        MySqlCommand command = new MySqlCommand("INSERT INTO chronicles.traits(id, name, priority, content)" +
-                                                "VALUES (@id, @name, @priority, @content)" +
-                                                "ON DUPLICATE KEY UPDATE " +
-                                                "id=@id, name=@name, priority=@priority, content=@content",
-            Connection);
+    protected override string TableName => "traits";
+    protected override string[] Fields => new[] {"id", "name", "priority", "content"};
 
-        command.Parameters.Add(new MySqlParameter("@id", MySqlDbType.Binary, 16));
-        command.Parameters.Add(new MySqlParameter("@name", MySqlDbType.VarChar, byte.MaxValue));
-        command.Parameters.Add(new MySqlParameter("@priority", MySqlDbType.Int32));
-        command.Parameters.Add(new MySqlParameter("@content", MySqlDbType.Text));
-        return command;
-    }
-
-    protected override void FillCommand(MySqlCommand pCommand, Trait pData)
+    protected override async Task ImportRow(NpgsqlBinaryImporter pImporter, Trait pData)
     {
-        pCommand.Parameters[0].Value = pData.Id.ToByteArray(true);
-        pCommand.Parameters[1].Value = pData.Name;
-        pCommand.Parameters[2].Value = pData.Priority;
-        pCommand.Parameters[3].Value = pData.Content;
+        await pImporter.WriteAsync(pData.Id.ToByteArray(true));
+        await pImporter.WriteAsync(pData.Name);
+        await pImporter.WriteAsync(pData.Priority);
+        await pImporter.WriteAsync(pData.Content);
     }
 }

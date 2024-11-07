@@ -6,27 +6,29 @@ namespace ChroniclesExporter.Table;
 
 public class TableHandler
 {
-    private static readonly TableHandler INSTANCE = new TableHandler();
+    private static readonly TableHandler INSTANCE = new();
 
-    private readonly Dictionary<Guid, TableEntry> _guidToTable = new Dictionary<Guid, TableEntry>();
-    private readonly ConcurrentDictionary<ELink, List<ILink>> _links = new ConcurrentDictionary<ELink, List<ILink>>();
-    
+    private readonly Dictionary<Guid, TableEntry> _guidToTable = new();
+    private readonly ConcurrentDictionary<ELink, List<ILink>> _links = new();
+
     public static TableEntry[] Entries => INSTANCE._guidToTable.Values.ToArray();
     public static Dictionary<ELink, List<ILink>> Links => INSTANCE._links.ToDictionary();
 
     /// <summary>
-    /// Returns the number of indexed table entries
+    ///     Returns the number of indexed table entries
     /// </summary>
     public static int Count => INSTANCE._guidToTable.Count;
 
     /// <summary>
-    /// Checks if a table entry with the provided GUID exists
+    ///     Checks if a table entry with the provided GUID exists
     /// </summary>
-    public static bool Contains(Guid pGuid) =>
-        INSTANCE._guidToTable.ContainsKey(pGuid);
+    public static bool Contains(Guid pGuid)
+    {
+        return INSTANCE._guidToTable.ContainsKey(pGuid);
+    }
 
     /// <summary>
-    /// Attempts to get the table entry associated with the GUID provided
+    ///     Attempts to get the table entry associated with the GUID provided
     /// </summary>
     public static bool TryGet(Guid pGuid, out TableEntry pEntry)
     {
@@ -36,7 +38,7 @@ public class TableHandler
     }
 
     /// <summary>
-    /// Register a new table entry with the provided file path and table type
+    ///     Register a new table entry with the provided file path and table type
     /// </summary>
     public static void Register(string pPath, ETable pTable)
     {
@@ -47,13 +49,11 @@ public class TableHandler
         }
 
         if (!INSTANCE._guidToTable.TryAdd(guid, new TableEntry(pTable, pPath)))
-        {
             LogHandler.Warning(ELogCode.IndexerGuidCollision, $"Table: {pTable}; Path: {pPath};");
-        }
     }
 
     /// <summary>
-    /// Register a new link entry with the provided link type
+    ///     Register a new link entry with the provided link type
     /// </summary>
     public static void RegisterLink(ELink pTable, ILink pLink)
     {

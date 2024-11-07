@@ -6,7 +6,8 @@ using Spectre.Console;
 
 namespace ChroniclesExporter.States;
 
-public class LogState(StateMachine<EProgramState> pStateMachine, EProgramState pId) : StateBehaviour<EProgramState>(pStateMachine, pId)
+public class LogState(StateMachine<EProgramState> pStateMachine, EProgramState pId)
+    : StateBehaviour<EProgramState>(pStateMachine, pId)
 {
     public override void Update()
     {
@@ -27,13 +28,13 @@ public class LogState(StateMachine<EProgramState> pStateMachine, EProgramState p
         EConsoleMark marks = DrawLogPrompt();
         if (marks != 0)
             LogHandler.Print(marks);
-        
+
         StateMachine.Goto(EProgramState.Complete);
     }
-    
+
     private static void DrawHeader()
     {
-        Rule header = new Rule("[blue]Print Logs[/]")
+        Rule header = new("[blue]Print Logs[/]")
         {
             Justification = Justify.Left
         };
@@ -42,7 +43,7 @@ public class LogState(StateMachine<EProgramState> pStateMachine, EProgramState p
 
     private static void DrawLogBreakdown()
     {
-        BreakdownChart chart = new BreakdownChart();
+        BreakdownChart chart = new();
         chart.AddItem("Info", LogHandler.InfoCount, Color.Grey);
         chart.AddItem("Warning", LogHandler.WarningCount, Color.Yellow);
         chart.AddItem("Error", LogHandler.ErrorCount, Color.Red);
