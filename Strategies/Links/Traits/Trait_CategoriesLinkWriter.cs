@@ -1,24 +1,26 @@
-﻿using ChroniclesExporter.IO.MySql;
+﻿using System.Data;
+using ChroniclesExporter.Database;
+using ChroniclesExporter.IO.Database;
 using ChroniclesExporter.Strategy.Links;
 using MySqlConnector;
+using Npgsql;
 
 namespace ChroniclesExporter.Strategy.Traits;
 
 // ReSharper disable once InconsistentNaming
-public class Trait_CategoriesLinkWriter : MySqlLinkWriter<Link>
+public class Trait_CategoriesLinkWriter : DbLinkWriter<Link>
 {
     public override ELink LinkId => ELink.TraitCategories;
-    protected override MySqlCommand BuildCommand()
+    protected override NpgsqlCommand BuildCommand()
     {
-        MySqlCommand command =
-            new MySqlCommand(
+        NpgsqlCommand command = DbHandler.DataSource.CreateCommand(
                 "INSERT INTO chronicles.traits_categories(trait_id, category_id)" + 
                 "VALUES (@trait, @category)" +
                 "ON DUPLICATE KEY UPDATE " + 
-                "trait_id=@trait, category_id=@category", Connection);
+                "trait_id=@trait, category_id=@category");
 
-        command.Parameters.Add(new MySqlParameter("@trait", MySqlDbType.Binary, 16));
-        command.Parameters.Add(new MySqlParameter("@category", MySqlDbType.Binary, 16));
+        command.Parameters.Add(new NpgsqlParameter("@trait", DbType.Binary, 16));
+        command.Parameters.Add(new NpgsqlParameter("@category", DbType.Binary, 16));
         return command;
     }
 }

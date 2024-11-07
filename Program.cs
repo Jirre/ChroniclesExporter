@@ -25,13 +25,13 @@ public static class Program
     private static void InitStateMachine()
     {
         STATE_MACHINE.Add(new InitState(STATE_MACHINE, EProgramState.Init));
-        STATE_MACHINE.Add(new MySqlLoginState(STATE_MACHINE, EProgramState.MySqlLogin));
-        STATE_MACHINE.Add(new MySqlTestState(STATE_MACHINE, EProgramState.MySqlTest));
+        STATE_MACHINE.Add(new DbLoginState(STATE_MACHINE, EProgramState.MySqlLogin));
+        STATE_MACHINE.Add(new DbTestState(STATE_MACHINE, EProgramState.MySqlTest));
         
         STATE_MACHINE.Add(new IndexState(STATE_MACHINE, EProgramState.Index));
         STATE_MACHINE.Add(new MdReadState(STATE_MACHINE, EProgramState.MdRead));
-        STATE_MACHINE.Add(new MySqlWriteState(STATE_MACHINE, EProgramState.MySqlWrite));
-        STATE_MACHINE.Add(new MySqlLinkState(STATE_MACHINE, EProgramState.MySqlLink));
+        STATE_MACHINE.Add(new DbWriteState(STATE_MACHINE, EProgramState.MySqlWrite));
+        STATE_MACHINE.Add(new DbLinkState(STATE_MACHINE, EProgramState.MySqlLink));
         
         STATE_MACHINE.Add(new LogState(STATE_MACHINE, EProgramState.Log));
         STATE_MACHINE.Add(EProgramState.Complete, CompleteState);

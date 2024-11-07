@@ -1,24 +1,37 @@
-﻿using ChroniclesExporter.IO.MySql;
+﻿using ChroniclesExporter.IO.Database;
 using ChroniclesExporter.Table;
 using ChroniclesExporter.Utility;
+using Npgsql;
 
-namespace ChroniclesExporter.MySql;
+namespace ChroniclesExporter.Database;
 
-public class MySqlHandler
+public class DbHandler
 {
-    public static string Server { get; private set; } = "localhost";
-    public static string Port { get; private set; } = "3306";
-    public static string Database { get; private set; } = "chronicles";
-    public static string UserId { get; set; } = "";
+    private static string _host = "localhost";
+    private static string _port = "5432";
+    private static string _database = "chronicles";
+    public static string Username { get; set; } = "";
     public static string Password { get; set; } = "";
 
-    private static readonly MySqlHandler INSTANCE = new MySqlHandler();
-    
-    private readonly Dictionary<ETable, MySqlWriter<IRow>> _tableWriters =
-        new Dictionary<ETable, MySqlWriter<IRow>>();
-    private readonly Dictionary<ELink, MySqlWriter<ILink>> _linkWriters =
-        new Dictionary<ELink, MySqlWriter<ILink>>();
+    public static NpgsqlDataSource DataSource { get; private set; } = null!;
 
+    private static readonly DbHandler INSTANCE = new DbHandler();
+    
+    private readonly Dictionary<ETable, DbWriter<IRow>> _tableWriters =
+        new Dictionary<ETable, DbWriter<IRow>>();
+    private readonly Dictionary<ELink, DbWriter<ILink>> _linkWriters =
+        new Dictionary<ELink, DbWriter<ILink>>();
+
+    public static void Setup()
+    {
+        DataSource = NpgsqlDataSource.Create(
+            $"Host={_host};" +
+            $"Port={_port};" +
+            $"Database={_database};" +
+            $"Username={Username}" +
+            $"Password={Password}");
+    }
+    
     /// <summary>
     /// Returns the number of indexed table entries
     /// </summary>
@@ -42,7 +55,7 @@ public class MySqlHandler
         Type[] types = TypeUtility.GetTypesBasedOnAbstractParent(typeof(ITableWriter));
         foreach (Type type in types)
         {
-            if (Activator.CreateInstance(type) is MySqlWriter<IRow> writer)
+            if (Activator.CreateInstance(type) is DbWriter<IRow> writer)
                 INSTANCE._tableWriters.TryAdd((ETable)writer.Id, writer);
         }
     }
@@ -52,15 +65,15 @@ public class MySqlHandler
         Type[] types = TypeUtility.GetTypesBasedOnAbstractParent(typeof(ILinkWriter));
         foreach (Type type in types)
         {
-            if (Activator.CreateInstance(type) is MySqlWriter<ILink> writer)
+            if (Activator.CreateInstance(type) is DbWriter<ILink> writer)
                 INSTANCE._linkWriters.TryAdd((ELink)writer.Id, writer);
         }
     }
 
-    public static bool TryGetWriter(ETable pTable, out MySqlWriter<IRow> pWriter) =>
+    public static bool TryGetWriter(ETable pTable, out DbWriter<IRow> pWriter) =>
         INSTANCE._tableWriters.TryGetValue(pTable, out pWriter!);
     
-    public static bool TryGetWriter(ELink pLink, out MySqlWriter<ILink> pWriter) =>
+    public static bool TryGetWriter(ELink pLink, out DbWriter<ILink> pWriter) =>
         INSTANCE._linkWriters.TryGetValue(pLink, out pWriter!);
     
     /// <summary>
@@ -68,11 +81,11 @@ public class MySqlHandler
     /// </summary>
     public static void SetEnvironmentVariables()
     {
-        if (TryGetEnvironmentVariable("MYSQL_SERVER", out string server)) Server = server;
-        if (TryGetEnvironmentVariable("MYSQL_PORT", out string port)) Port = port;
-        if (TryGetEnvironmentVariable("MYSQL_DATABASE", out string database)) Database = database;
-        if (TryGetEnvironmentVariable("MYSQL_USER_ID", out string userId)) UserId = userId;
-        if (TryGetEnvironmentVariable("MYSQL_PASSWORD", out string password)) Password = password;
+        if (TryGetEnvironmentVariable("DB_SERVER", out string server)) _host = server;
+        if (TryGetEnvironmentVariable("DB_PORT", out string port)) _port = port;
+        if (TryGetEnvironmentVariable("DB_DATABASE", out string database)) _database = database;
+        if (TryGetEnvironmentVariable("DB_USER_ID", out string userId)) Username = userId;
+        if (TryGetEnvironmentVariable("DB_PASSWORD", out string password)) Password = password;
     }
 
     private static bool TryGetEnvironmentVariable(string pKey, out string pValue)

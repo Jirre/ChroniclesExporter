@@ -1,27 +1,29 @@
-﻿using ChroniclesExporter.IO.MySql;
-using MySqlConnector;
+﻿using ChroniclesExporter.Database;
+using ChroniclesExporter.IO.Database;
+using Npgsql;
+using NpgsqlTypes;
 
 namespace ChroniclesExporter.Strategy.Traits;
 
-public class SkillWriter : MySqlTableWriter<Skill>
+public class SkillWriter : DbTableWriter<Skill>
 {
     public override ETable TableId => ETable.Skills;
-    protected override MySqlCommand BuildCommand()
+    protected override NpgsqlCommand BuildCommand()
     {
-        MySqlCommand command = new MySqlCommand("INSERT INTO chronicles.skills(id, name, ability, content)" +
-                                                "VALUES (@id, @name, @ability, @content)" +
-                                                "ON DUPLICATE KEY UPDATE " +
-                                                "id=@id, name=@name, ability=@ability, content=@content",
-            Connection);
+        NpgsqlCommand command = DbHandler.DataSource.CreateCommand(
+            "INSERT INTO chronicles.skills(id, name, ability, content)" +
+            "VALUES (@id, @name, @ability, @content)" +
+            "ON DUPLICATE KEY UPDATE " +
+            "id=@id, name=@name, ability=@ability, content=@content");
 
-        command.Parameters.Add(new MySqlParameter("@id", MySqlDbType.Binary, 16));
-        command.Parameters.Add(new MySqlParameter("@name", MySqlDbType.VarChar, byte.MaxValue));
-        command.Parameters.Add(new MySqlParameter("@ability", MySqlDbType.Enum));
-        command.Parameters.Add(new MySqlParameter("@content", MySqlDbType.Text));
+        command.Parameters.Add("@id", NpgsqlDbType.Uuid);
+        command.Parameters.Add("@name", NpgsqlDbType.Varchar, byte.MaxValue);
+        command.Parameters.Add(new NpgsqlParameter { ParameterName = "@ability", DataTypeName = "abilities" });
+        command.Parameters.Add("@content", NpgsqlDbType.Text);
         return command;
     }
 
-    protected override void FillCommand(MySqlCommand pCommand, Skill pData)
+    protected override void FillCommand(NpgsqlCommand pCommand, Skill pData)
     {
         pCommand.Parameters[0].Value = pData.Id.ToByteArray(true);
         pCommand.Parameters[1].Value = pData.Name;

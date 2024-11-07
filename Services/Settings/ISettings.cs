@@ -1,5 +1,5 @@
 ﻿using ChroniclesExporter.IO;
-using ChroniclesExporter.IO.MySql;
+using ChroniclesExporter.IO.Database;
 using ChroniclesExporter.Table;
 
 namespace ChroniclesExporter.Settings;
@@ -24,7 +24,7 @@ public interface ISettings<in TData> : ISettings
 public interface ISettings<in TData, TReader, TWriter> : ISettings<TData>
     where TData : IRow
     where TReader : IReader
-    where TWriter : MySqlWriter<IRow>
+    where TWriter : DbWriter<IRow>
 {
     Type ISettings.Reader => typeof(TReader);
     Type ISettings.Writer => typeof(TWriter);

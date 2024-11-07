@@ -1,5 +1,5 @@
 ﻿using ChroniclesExporter.Internal.StateMachine;
-using ChroniclesExporter.MySql;
+using ChroniclesExporter.Database;
 using ChroniclesExporter.StateMachine;
 using ChroniclesExporter.Utility;
 
@@ -11,9 +11,9 @@ public class InitState(StateMachine<EProgramState> pStateMachine, EProgramState 
     public override void Update()
     {
         ReadEnvFiles();
-        MySqlHandler.SetEnvironmentVariables();
+        DbHandler.SetEnvironmentVariables();
         
-        if (string.IsNullOrWhiteSpace(MySqlHandler.UserId) || string.IsNullOrWhiteSpace(MySqlHandler.Password))
+        if (string.IsNullOrWhiteSpace(DbHandler.Username) || string.IsNullOrWhiteSpace(DbHandler.Password))
         {
             StateMachine.Goto(EProgramState.MySqlLogin);
             return;

@@ -1,26 +1,28 @@
-﻿using ChroniclesExporter.IO.MySql;
-using MySqlConnector;
+﻿using ChroniclesExporter.Database;
+using ChroniclesExporter.IO.Database;
+using Npgsql;
+using NpgsqlTypes;
 
 namespace ChroniclesExporter.Strategy.Conditions;
 
-public class ConditionWriter : MySqlTableWriter<Condition>
+public class ConditionWriter : DbTableWriter<Condition>
 {
     public override ETable TableId => ETable.Conditions;
-    protected override MySqlCommand BuildCommand()
+    protected override NpgsqlCommand BuildCommand()
     {
-        MySqlCommand command = new MySqlCommand("INSERT INTO chronicles.conditions(id, name, content)" +
-                                                "VALUES (@id, @name, @content)" +
-                                                "ON DUPLICATE KEY UPDATE " +
-                                                "id=@id, name=@name, content=@content",
-            Connection);
+        NpgsqlCommand command = DbHandler.DataSource.CreateCommand(
+            "INSERT INTO chronicles.conditions(id, name, content)" +
+             "VALUES (@id, @name, @content)" +
+             "ON DUPLICATE KEY UPDATE " +
+             "id=@id, name=@name, content=@content");
 
-        command.Parameters.Add(new MySqlParameter("@id", MySqlDbType.Binary, 16));
-        command.Parameters.Add(new MySqlParameter("@name", MySqlDbType.VarChar, byte.MaxValue));
-        command.Parameters.Add(new MySqlParameter("@content", MySqlDbType.Text));
+        command.Parameters.Add("@id", NpgsqlDbType.Uuid);
+        command.Parameters.Add("@name", NpgsqlDbType.Varchar, byte.MaxValue);
+        command.Parameters.Add("@content", NpgsqlDbType.Text);
         return command;
     }
 
-    protected override void FillCommand(MySqlCommand pCommand, Condition pData)
+    protected override void FillCommand(NpgsqlCommand pCommand, Condition pData)
     {
         pCommand.Parameters[0].Value = pData.Id.ToByteArray(true);
         pCommand.Parameters[1].Value = pData.Name;

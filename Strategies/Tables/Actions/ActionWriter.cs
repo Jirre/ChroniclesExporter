@@ -1,29 +1,30 @@
-﻿using ChroniclesExporter.IO.MySql;
-using MySqlConnector;
-using Action = ChroniclesExporter.Strategy.Actions.Action;
+﻿using ChroniclesExporter.Database;
+using ChroniclesExporter.IO.Database;
+using Npgsql;
+using NpgsqlTypes;
 
 namespace ChroniclesExporter.Strategy.Actions;
 
-public class ActionWriter : MySqlTableWriter<Action>
+public class ActionWriter : DbTableWriter<Action>
 {
     public override ETable TableId => ETable.Actions;
-    protected override MySqlCommand BuildCommand()
+    protected override NpgsqlCommand BuildCommand()
     {
-        MySqlCommand command = new MySqlCommand("INSERT INTO chronicles.actions(id, name, details, type, content)" +
-                                                "VALUES (@id, @name, @details, @type, @content)" +
-                                                "ON DUPLICATE KEY UPDATE " +
-                                                "id=@id, name=@name, details=@details, type=@type, content=@content",
-            Connection);
+        NpgsqlCommand command = DbHandler.DataSource.CreateCommand(
+            "INSERT INTO chronicles.actions(id, name, details, type, content)" +
+            "VALUES (@id, @name, @details, @type, @content)" +
+            "ON DUPLICATE KEY UPDATE " +
+            "id=@id, name=@name, details=@details, type=@type, content=@content");
 
-        command.Parameters.Add(new MySqlParameter("@id", MySqlDbType.Binary, 16));
-        command.Parameters.Add(new MySqlParameter("@name", MySqlDbType.VarChar, byte.MaxValue));
-        command.Parameters.Add(new MySqlParameter("@details", MySqlDbType.VarChar, 2048));
-        command.Parameters.Add(new MySqlParameter("@type", MySqlDbType.Enum));
-        command.Parameters.Add(new MySqlParameter("@content", MySqlDbType.Text));
+        command.Parameters.Add("@id", NpgsqlDbType.Uuid, 16);
+        command.Parameters.Add("@name", NpgsqlDbType.Varchar, byte.MaxValue);
+        command.Parameters.Add("@details", NpgsqlDbType.Varchar, 2048);
+        command.Parameters.Add(new NpgsqlParameter { ParameterName = "@type", DataTypeName = "actionType" });
+        command.Parameters.Add("@content", NpgsqlDbType.Text);
         return command;
     }
 
-    protected override void FillCommand(MySqlCommand pCommand, Action pData)
+    protected override void FillCommand(NpgsqlCommand pCommand, Action pData)
     {
         pCommand.Parameters[0].Value = pData.Id.ToByteArray(true);
         pCommand.Parameters[1].Value = pData.Name;

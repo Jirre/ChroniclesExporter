@@ -1,14 +1,14 @@
 ﻿using ChroniclesExporter.IO;
-using ChroniclesExporter.IO.MySql;
+using ChroniclesExporter.IO.Database;
 using ChroniclesExporter.Log;
-using ChroniclesExporter.MySql;
+using ChroniclesExporter.Database;
 using ChroniclesExporter.StateMachine;
 using ChroniclesExporter.Table;
 using Spectre.Console;
 
 namespace ChroniclesExporter.States;
 
-public class MySqlLinkState(StateMachine<EProgramState> pStateMachine, EProgramState pId) : 
+public class DbLinkState(StateMachine<EProgramState> pStateMachine, EProgramState pId) : 
     AProgressState<ELink, IWriter>(pStateMachine, pId)
 {
     protected override EProgramState DefaultCompleteState => EProgramState.Log;
@@ -18,7 +18,7 @@ public class MySqlLinkState(StateMachine<EProgramState> pStateMachine, EProgramS
     {
         foreach (KeyValuePair<ELink, List<ILink>> kvp in TableHandler.Links)
         {
-            if (!MySqlHandler.TryGetWriter(kvp.Key, out MySqlWriter<ILink> writer)) continue;
+            if (!DbHandler.TryGetWriter(kvp.Key, out DbWriter<ILink> writer)) continue;
             Handlers.Add(kvp.Key, writer);
             writer.Prepare(kvp.Value.ToArray());
         }

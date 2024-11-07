@@ -1,27 +1,28 @@
-﻿using ChroniclesExporter.Log;
+﻿using ChroniclesExporter.Database;
+using ChroniclesExporter.Log;
 using ChroniclesExporter.Table;
-using MySqlConnector;
+using Npgsql;
 
-namespace ChroniclesExporter.IO.MySql;
+namespace ChroniclesExporter.IO.Database;
 
 /// <summary>
 /// Interface used as flag in search through reflection
 /// </summary>
 public interface ILinkWriter;
 
-public abstract class MySqlLinkWriter<T> : MySqlWriter<ILink>, ILinkWriter
+public abstract class DbLinkWriter<T> : DbWriter<ILink>, ILinkWriter
     where T : ILink
 {
     public abstract ELink LinkId { get; }
     public sealed override Enum Id => LinkId;
-
+    
     protected override async Task WriteAsync(ILink[] pQueries)
     {
         try
         {
-            await using MySqlConnection connection = Connection;
-            await Connection.OpenAsync();
-            await using MySqlCommand command = BuildCommand();
+            await using NpgsqlConnection connection = DbHandler.DataSource.CreateConnection();
+            await connection.OpenAsync();
+            await using NpgsqlCommand command = BuildCommand();
             await command.PrepareAsync();
             foreach (ILink query in pQueries)
             {
@@ -30,15 +31,15 @@ public abstract class MySqlLinkWriter<T> : MySqlWriter<ILink>, ILinkWriter
                 ++Progress;
             }
         }
-        catch (MySqlException ex)
+        catch (NpgsqlException ex)
         {
             LogHandler.Error(ELogCode.MySqlError, ex.ToString());
         }
     }
     
-    protected abstract MySqlCommand BuildCommand();
+    protected abstract NpgsqlCommand BuildCommand();
 
-    protected virtual void FillCommand(MySqlCommand pCommand, T pData)
+    protected virtual void FillCommand(NpgsqlCommand pCommand, T pData)
     {
         pCommand.Parameters[0].Value = pData.Source.ToByteArray(true);
         pCommand.Parameters[1].Value = pData.Target.ToByteArray(true);

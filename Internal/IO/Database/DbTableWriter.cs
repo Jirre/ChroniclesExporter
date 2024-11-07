@@ -1,29 +1,29 @@
-﻿using ChroniclesExporter.Log;
-using ChroniclesExporter.MySql;
+﻿using ChroniclesExporter.Database;
+using ChroniclesExporter.Log;
 using ChroniclesExporter.Settings;
 using ChroniclesExporter.Table;
-using MySqlConnector;
+using Npgsql;
 
-namespace ChroniclesExporter.IO.MySql;
+namespace ChroniclesExporter.IO.Database;
 
 /// <summary>
 /// Interface used as flag in search through reflection
 /// </summary>
 public interface ITableWriter;
 
-public abstract class MySqlTableWriter<T> : MySqlWriter<IRow>, ITableWriter
+public abstract class DbTableWriter<T> : DbWriter<IRow>, ITableWriter
     where T : IRow
 {
     public abstract ETable TableId { get; }
+    
     public sealed override Enum Id => TableId;
-
     protected sealed override async Task WriteAsync(IRow[] pQueries)
     {
         try
         {
-            await using MySqlConnection connection = Connection;
-            await Connection.OpenAsync();
-            await using MySqlCommand command = BuildCommand();
+            await using NpgsqlConnection connection = DbHandler.DataSource.CreateConnection();
+            await connection.OpenAsync();
+            await using NpgsqlCommand command = BuildCommand();
             await command.PrepareAsync();
             await WaitForDependencies();
             foreach (IRow query in pQueries)
@@ -33,12 +33,12 @@ public abstract class MySqlTableWriter<T> : MySqlWriter<IRow>, ITableWriter
                 ++Progress;
             }
         }
-        catch (MySqlException ex)
+        catch (NpgsqlException ex)
         {
             LogHandler.Error(ELogCode.MySqlError, ex.ToString());
         }
     }
-
+    
     private async Task WaitForDependencies()
     {
         if (!SettingsHandler.TryGetSettings<T>(TableId, out ISettings<T> settings) ||
@@ -47,12 +47,12 @@ public abstract class MySqlTableWriter<T> : MySqlWriter<IRow>, ITableWriter
         
         foreach (ETable dependency in settings.Dependencies)
         {
-            if (MySqlHandler.TryGetWriter(dependency, out MySqlWriter<IRow> writer) && writer.Task != null)
+            if (DbHandler.TryGetWriter(dependency, out DbWriter<IRow> writer) && writer.Task != null)
                 await writer.Task;
         }
     }
     
-    protected abstract MySqlCommand BuildCommand();
+    protected abstract NpgsqlCommand BuildCommand();
 
-    protected abstract void FillCommand(MySqlCommand pCommand, T pData);
+    protected abstract void FillCommand(NpgsqlCommand pCommand, T pData);
 }
