@@ -8,8 +8,6 @@ public abstract class DbWriter<T> : IWriter
 
     public Task? Task { get; private set; }
 
-    public bool IsReady => Task?.IsCompleted ?? false;
-
     public int Progress { get; protected set; }
     public int TaskCount => _queries?.Length ?? 0;
 

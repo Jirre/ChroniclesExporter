@@ -14,7 +14,7 @@ public interface ITableWriter;
 public abstract class DbTableWriter<T> : DbWriter<IRow>, ITableWriter
     where T : IRow
 {
-    public abstract ETable TableId { get; }
+    protected abstract ETable TableId { get; }
 
     public sealed override Enum Id => TableId;
 

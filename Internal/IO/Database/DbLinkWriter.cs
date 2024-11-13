@@ -13,7 +13,7 @@ public interface ILinkWriter;
 public abstract class DbLinkWriter<T> : DbWriter<ILink>, ILinkWriter
     where T : ILink
 {
-    public abstract ELink LinkId { get; }
+    protected abstract ELink LinkId { get; }
     public sealed override Enum Id => LinkId;
 
     protected abstract string TableName { get; }

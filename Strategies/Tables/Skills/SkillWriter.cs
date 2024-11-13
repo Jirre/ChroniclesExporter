@@ -5,7 +5,7 @@ namespace ChroniclesExporter.Strategy.Traits;
 
 public class SkillWriter : DbTableWriter<Skill>
 {
-    public override ETable TableId => ETable.Skills;
+    protected override ETable TableId => ETable.Skills;
     protected override string TableName => "skills";
     protected override string[] Fields => new[] {"id", "name", "ability", "content"};
 

@@ -5,7 +5,7 @@ namespace ChroniclesExporter.Strategy.Traits;
 
 public class TraitWriter : DbTableWriter<Trait>
 {
-    public override ETable TableId => ETable.Traits;
+    protected override ETable TableId => ETable.Traits;
     protected override string TableName => "traits";
     protected override string[] Fields => new[] {"id", "name", "priority", "content"};
 

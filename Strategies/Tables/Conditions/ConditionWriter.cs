@@ -5,7 +5,7 @@ namespace ChroniclesExporter.Strategy.Conditions;
 
 public class ConditionWriter : DbTableWriter<Condition>
 {
-    public override ETable TableId => ETable.Conditions;
+    protected override ETable TableId => ETable.Conditions;
 
     protected override string TableName => "conditions";
     protected override string[] Fields => new[] {"id", "name", "content"};

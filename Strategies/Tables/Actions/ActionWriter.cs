@@ -5,7 +5,7 @@ namespace ChroniclesExporter.Strategy.Actions;
 
 public class ActionWriter : DbTableWriter<Action>
 {
-    public override ETable TableId => ETable.Actions;
+    protected override ETable TableId => ETable.Actions;
     protected override string TableName => "actions";
     protected override string[] Fields => new[] {"id", "name", "details", "type", "content"};
 

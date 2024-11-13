@@ -84,43 +84,11 @@ public abstract partial class MdReader<T> : IReader
 
         foreach (HtmlNode node in anchorNodes)
         {
-            HtmlNode parent = node.ParentNode;
             string href = node.GetAttributeValue("href", "");
-            if (TryMatch(UrlRegex(), href, out Match urlMatch))
+            if (TryGetPageLink(href, ref pDoc, node) || 
+                TryGetLocalLink(href, ref pDoc, node))
             {
-                HtmlNode link = pDoc.CreateElement("PageLink");
-                if (TableHandler.TryGet(new Guid(urlMatch.Groups[1].Value), out TableEntry entry) &&
-                    SettingsHandler.TryGetSettings<T>(entry.Id, out ISettings<T> settings) &&
-                    entry.Row is T rowData)
-                {
-                    link.SetAttributeValue("target",
-                        string.IsNullOrWhiteSpace(settings.Url(rowData))
-                            ? urlMatch.Groups[1].Value
-                            : string.Format(settings.Url(rowData), urlMatch.Groups[1].Value));
-                    link.SetAttributeValue("icon", settings.LinkIcon(rowData));
-                }
-                else
-                {
-                    link.SetAttributeValue("target", urlMatch.Groups[1].Value);
-                }
-
-                link.InnerHtml = node.InnerHtml;
-                parent.ReplaceChild(link, node);
-                continue;
-            }
-
-            if (TryMatch(FileRegex(), href, out Match localMatch))
-            {
-                HtmlNode link = pDoc.CreateElement("LocalLink");
-                link.SetAttributeValue("target", localMatch.Groups[1].Value);
-
-                if (TableHandler.TryGet(new Guid(localMatch.Groups[1].Value), out TableEntry entry) &&
-                    SettingsHandler.TryGetSettings<T>(entry.Id, out ISettings<T> settings) &&
-                    entry.Row is T rowData)
-                    link.SetAttributeValue("icon", settings.LinkIcon(rowData));
-
-                link.InnerHtml = node.InnerHtml;
-                parent.ReplaceChild(link, node);
+                // Intentional Empty State
             }
         }
     }
@@ -146,6 +114,50 @@ public abstract partial class MdReader<T> : IReader
     protected virtual bool TryGetProperties(string pLine, ref T pData)
     {
         return false;
+    }
+
+    private static bool TryGetPageLink(string pHref, ref HtmlDocument pDoc, HtmlNode pNode)
+    {
+        if (!TryMatch(UrlRegex(), pHref, out Match urlMatch)) return false;
+        HtmlNode parent = pNode.ParentNode;
+        
+        HtmlNode link = pDoc.CreateElement("PageLink");
+        if (TableHandler.TryGet(new Guid(urlMatch.Groups[1].Value), out TableEntry entry) &&
+            SettingsHandler.TryGetSettings<T>(entry.Id, out ISettings<T> settings) &&
+            entry.Row is T rowData)
+        {
+            link.SetAttributeValue("target",
+                string.IsNullOrWhiteSpace(settings.Url(rowData))
+                    ? urlMatch.Groups[1].Value
+                    : string.Format(settings.Url(rowData), urlMatch.Groups[1].Value));
+            link.SetAttributeValue("icon", settings.LinkIcon(rowData));
+        }
+        else
+        {
+            link.SetAttributeValue("target", urlMatch.Groups[1].Value);
+        }
+
+        link.InnerHtml = pNode.InnerHtml;
+        parent.ReplaceChild(link, pNode);
+        return true;
+    }
+
+    private static bool TryGetLocalLink(string pHref, ref HtmlDocument pDoc, HtmlNode pNode)
+    {
+        if (!TryMatch(FileRegex(), pHref, out Match localMatch)) return false;
+        HtmlNode parent = pNode.ParentNode;
+        
+        HtmlNode link = pDoc.CreateElement("LocalLink");
+        link.SetAttributeValue("target", localMatch.Groups[1].Value);
+
+        if (TableHandler.TryGet(new Guid(localMatch.Groups[1].Value), out TableEntry entry) &&
+            SettingsHandler.TryGetSettings<T>(entry.Id, out ISettings<T> settings) &&
+            entry.Row is T rowData)
+            link.SetAttributeValue("icon", settings.LinkIcon(rowData));
+
+        link.InnerHtml = pNode.InnerHtml;
+        parent.ReplaceChild(link, pNode);
+        return true;
     }
 
     #endregion
