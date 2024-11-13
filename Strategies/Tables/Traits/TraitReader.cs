@@ -9,9 +9,12 @@ public class TraitReader : MdReader<Trait>
 {
     protected override bool TryGetProperties(string pLine, ref Trait pData)
     {
-        if (pLine.StartsWith("Trait Categories:"))
+        if (pLine.StartsWith("Categories:"))
         {
-            GetGuids(pLine, ref pData);
+            pLine = pLine.TrimStart("Categories:").Trim();
+            string[] traits = pLine.Split(',');
+            ETraitCategories[] traitCategories = traits.Select(Enum.Parse<ETraitCategories>).ToArray();
+            pData.Categories = traitCategories;
             return true;
         }
 
@@ -26,7 +29,7 @@ public class TraitReader : MdReader<Trait>
 
     private static void GetGuids(string pLine, ref Trait pContainer)
     {
-        pLine = pLine.TrimStart("Trait Categories:");
+        pLine = pLine.TrimStart("Categories:");
         Guid[] linkGuids = MarkdownUtility.GetLinkGuids(pLine);
         if (linkGuids.Length == 0)
             return;
