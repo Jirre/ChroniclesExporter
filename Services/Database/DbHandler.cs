@@ -42,7 +42,7 @@ public class DbHandler
             $"Username={Username};" +
             $"Password={Password}");
 
-        IEnumerable<Type> enums = TypeUtility.GetTypesWithAttribute(typeof(DbEnumAttribute));
+        IEnumerable<Type> enums = ReflectionUtility.GetTypesWithAttribute(typeof(DbEnumAttribute));
 
         foreach (Type e in enums)
         {
@@ -64,7 +64,7 @@ public class DbHandler
 
     private static void LoadTableWriters()
     {
-        Type[] types = TypeUtility.GetTypesBasedOnAbstractParent(typeof(ITableWriter));
+        Type[] types = ReflectionUtility.GetTypesBasedOnAbstractParent(typeof(ITableWriter));
         foreach (Type type in types)
             if (Activator.CreateInstance(type) is DbWriter<IRow> writer)
                 INSTANCE._tableWriters.TryAdd((ETable) writer.Id, writer);
@@ -72,7 +72,7 @@ public class DbHandler
 
     private static void LoadLinkWriters()
     {
-        Type[] types = TypeUtility.GetTypesBasedOnAbstractParent(typeof(ILinkWriter));
+        Type[] types = ReflectionUtility.GetTypesBasedOnAbstractParent(typeof(ILinkWriter));
         foreach (Type type in types)
             if (Activator.CreateInstance(type) is DbWriter<ILink> writer)
                 INSTANCE._linkWriters.TryAdd((ELink) writer.Id, writer);

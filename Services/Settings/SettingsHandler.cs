@@ -15,7 +15,7 @@ public class SettingsHandler
     /// </summary>
     public static void Load()
     {
-        Type[] types = TypeUtility.GetTypesWithAttribute(typeof(SettingsAttribute));
+        Type[] types = ReflectionUtility.GetTypesWithAttribute(typeof(SettingsAttribute));
         foreach (Type type in types)
         {
             ETable table = ((SettingsAttribute) type.GetCustomAttributes(typeof(SettingsAttribute), true).First()).Type;

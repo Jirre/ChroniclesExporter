@@ -54,4 +54,10 @@ public static partial class StringUtility
             ? pValue.Remove(0, pSubstring.Length).TrimStart(' ')
             : pValue;
     }
+    
+    public static bool TryMatch(this string pValue, Regex pRegex, out Match pMatch)
+    {
+        pMatch = pRegex.Match(pValue);
+        return pMatch.Success;
+    }
 }
