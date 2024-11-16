@@ -10,8 +10,7 @@ namespace ChroniclesExporter.IO.Database;
 /// </summary>
 public interface ILinkWriter;
 
-public abstract class DbLinkWriter<T> : DbWriter<ILink>, ILinkWriter
-    where T : ILink
+public abstract class DbLinkWriter : DbWriter<ILink>, ILinkWriter
 {
     protected abstract ELink LinkId { get; }
     public sealed override Enum Id => LinkId;
@@ -39,7 +38,7 @@ public abstract class DbLinkWriter<T> : DbWriter<ILink>, ILinkWriter
             foreach (ILink query in pQueries)
             {
                 await importer.StartRowAsync();
-                await ImportRow(importer, (T) query);
+                await ImportRow(importer, query);
                 ++Progress;
             }
 
@@ -51,9 +50,15 @@ public abstract class DbLinkWriter<T> : DbWriter<ILink>, ILinkWriter
         }
     }
 
-    protected virtual async Task ImportRow(NpgsqlBinaryImporter pImporter, T pData)
+    protected virtual async Task ImportRow(NpgsqlBinaryImporter pImporter, ILink pData)
     {
         await pImporter.WriteAsync(pData.Source.ToByteArray(true));
-        await pImporter.WriteAsync(pData.Target.ToByteArray(true));
+        await pImporter.WriteAsync(((Guid)pData.Target).ToByteArray(true));
     }
+}
+
+public class Link(Guid pSource, Guid pTarget) : ILink
+{
+    public Guid Source { get; } = pSource;
+    public object Target { get; } = pTarget;
 }

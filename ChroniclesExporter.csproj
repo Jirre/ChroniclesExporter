@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <ApplicationIcon>export.ico</ApplicationIcon>
@@ -16,7 +16,7 @@
         <Title>Chronicles Exporter</Title>
         <Authors>Jirre Verkerk</Authors>
         <Description>Console application to export Notion Exports to the Postgresql database of Chronicles RPG</Description>
-        <LangVersion>14</LangVersion>
+        <LangVersion>13</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>

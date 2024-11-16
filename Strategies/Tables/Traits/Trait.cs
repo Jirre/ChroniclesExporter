@@ -8,5 +8,4 @@ public class Trait : IRow
     public Guid Id { get; set; }
     public string? Name { get; set; }
     public string? Content { get; set; }
-    public ETraitCategories[] Categories { get; set; }
 }

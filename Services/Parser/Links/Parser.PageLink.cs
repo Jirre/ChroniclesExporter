@@ -12,7 +12,7 @@ public static partial class ParserPageLink
     private static partial Regex UrlRegex();
     
     [LinkParseFunction(100)]
-    private static bool GetPageLink(string pHref, ref HtmlDocument pDoc, HtmlNode pNode)
+    private static bool GetPageLink(string pHref, ref HtmlDocument pDoc, ref HtmlNode pNode)
     {
         if (!pHref.TryMatch(UrlRegex(), out Match urlMatch)) return false;
         HtmlNode parent = pNode.ParentNode;

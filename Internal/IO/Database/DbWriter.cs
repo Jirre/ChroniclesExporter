@@ -1,17 +1,20 @@
 ﻿namespace ChroniclesExporter.IO.Database;
 
-public abstract class DbWriter<T> : IWriter
+public abstract class DbWriter : IWriter
+{
+    public abstract Enum Id { get; }
+    
+    public Task? Task { get; protected set; }
+    public int Progress { get; protected set; }
+    public abstract int TaskCount { get; }
+    public abstract Task Write();
+}
+public abstract class DbWriter<T> : DbWriter
 {
     private T[]? _queries;
+    public sealed override int TaskCount => _queries?.Length ?? 0;
 
-    public abstract Enum Id { get; }
-
-    public Task? Task { get; private set; }
-
-    public int Progress { get; protected set; }
-    public int TaskCount => _queries?.Length ?? 0;
-
-    public Task Write()
+    public sealed override Task Write()
     {
         if (_queries == null)
             return Task.CompletedTask;

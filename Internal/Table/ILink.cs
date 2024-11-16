@@ -3,5 +3,5 @@
 public interface ILink
 {
     Guid Source { get; }
-    Guid Target { get; }
+    object Target { get; }
 }

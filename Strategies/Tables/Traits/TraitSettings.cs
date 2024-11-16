@@ -22,8 +22,5 @@ public class TraitSettings : ISettings<Trait, TraitReader, TraitWriter>
         return "trait";
     }
 
-    public ETable[] Dependencies =>
-    [
-        ETable.TraitCategories
-    ];
+    public ETable[] Dependencies => [];
 }

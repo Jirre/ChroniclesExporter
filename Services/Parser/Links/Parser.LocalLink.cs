@@ -13,7 +13,7 @@ public static partial class ParserLocalLink
     private static partial Regex FileRegex();
 
     [LinkParseFunction(99)]
-    private static bool GetLocalLink(string pHref, ref HtmlDocument pDoc, HtmlNode pNode)
+    private static bool GetLocalLink(string pHref, ref HtmlDocument pDoc, ref HtmlNode pNode)
     {
         if (!pHref.TryMatch(FileRegex(), out Match localMatch)) return false;
         HtmlNode parent = pNode.ParentNode;
@@ -30,6 +30,4 @@ public static partial class ParserLocalLink
         parent.ReplaceChild(link, pNode);
         return true;
     }
-
-
 }

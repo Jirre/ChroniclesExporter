@@ -3,7 +3,7 @@
 namespace ChroniclesExporter.Strategy.Links;
 
 // ReSharper disable once InconsistentNaming
-public class Condition_Traits : DbLinkWriter<Link>
+public class Condition_Traits : DbLinkWriter
 {
     protected override ELink LinkId => ELink.ConditionTraits;
 

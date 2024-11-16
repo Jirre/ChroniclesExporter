@@ -1,5 +1,4 @@
 ﻿using ChroniclesExporter.IO;
-using ChroniclesExporter.Strategy.Links;
 using ChroniclesExporter.Table;
 using ChroniclesExporter.Utility;
 
@@ -13,11 +12,14 @@ public class TraitReader : MdReader<Trait>
         {
             pLine = pLine.TrimStart("Categories:").Trim();
             string[] traits = pLine.Split(',');
-            ETraitCategories[] traitCategories = traits.Select(Enum.Parse<ETraitCategories>).ToArray();
-            pData.Categories = traitCategories;
+            foreach (string trait in traits)
+            {
+                if (Enum.TryParse(trait.Trim(), true, out ETraitCategories category))
+                    TableHandler.RegisterLink(ELink.TraitCategories, new CategoryLink(pData.Id, category));
+            }
             return true;
         }
-
+        
         if (pLine.StartsWith("Index:"))
         {
             GetPriority(pLine, ref pData);
@@ -25,16 +27,6 @@ public class TraitReader : MdReader<Trait>
         }
 
         return false;
-    }
-
-    private static void GetGuids(string pLine, ref Trait pContainer)
-    {
-        pLine = pLine.TrimStart("Categories:");
-        Guid[] linkGuids = MarkdownUtility.GetLinkGuids(pLine);
-        if (linkGuids.Length == 0)
-            return;
-        foreach (Guid category in linkGuids)
-            TableHandler.RegisterLink(ELink.TraitCategories, new Link(pContainer.Id, category));
     }
 
     private static void GetPriority(string pLine, ref Trait pContainer)

@@ -12,6 +12,5 @@ public enum ETable
     Races,
     Skills,
     Subclasses,
-    TraitCategories,
     Traits
 }

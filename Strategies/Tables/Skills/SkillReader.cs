@@ -1,5 +1,5 @@
 ﻿using ChroniclesExporter.IO;
-using ChroniclesExporter.Strategy.Links;
+using ChroniclesExporter.IO.Database;
 using ChroniclesExporter.Table;
 using ChroniclesExporter.Utility;
 

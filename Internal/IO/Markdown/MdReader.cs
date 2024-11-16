@@ -32,16 +32,15 @@ public abstract class MdReader<T> : IReader
 
     private async Task ReadFile(string pFile)
     {
-        string[] lines = await File.ReadAllLinesAsync(pFile);
+        if (!StringUtility.TryExtractGuidFromString(pFile, out Guid id) ||
+            !TableHandler.TryGet(id, out TableEntry entry))
+            return;
+        
         T row = Activator.CreateInstance<T>();
-        if (!StringUtility.TryExtractGuidFromString(pFile, out Guid id))
-            return;
-
-        if (!TableHandler.TryGet(id, out TableEntry entry))
-            return;
-
         row.Id = id;
+        
         string content = "";
+        string[] lines = await File.ReadAllLinesAsync(pFile);
         for (int i = 0; i < lines.Length; i++)
         {
             string line = lines[i];
