@@ -11,17 +11,13 @@ public interface ISettings
 
     Type Reader { get; }
     Type Writer { get; }
+    
+    string Url(IRow pData);
+    string LinkClasses(IRow pData);
+    string LinkIcon(IRow pData);
 }
 
-public interface ISettings<in TData> : ISettings
-    where TData : IRow
-{
-    string Url(TData pData);
-    string LinkClasses(TData pData);
-    string LinkIcon(TData pData);
-}
-
-public interface ISettings<in TData, TReader, TWriter> : ISettings<TData>
+public interface ISettings<in TData, TReader, TWriter> : ISettings
     where TData : IRow
     where TReader : IReader
     where TWriter : DbWriter<IRow>

@@ -57,7 +57,7 @@ public abstract class DbTableWriter<T> : DbWriter<IRow>, ITableWriter
 
     private async Task WaitForDependencies()
     {
-        if (!SettingsHandler.TryGetSettings<T>(TableId, out ISettings<T> settings) ||
+        if (!SettingsHandler.TryGetSettings<T>(TableId, out ISettings settings) ||
             settings.Dependencies.Length == 0)
             return;
 

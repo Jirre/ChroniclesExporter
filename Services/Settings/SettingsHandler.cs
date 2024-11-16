@@ -36,19 +36,10 @@ public class SettingsHandler
     /// <summary>
     ///     Attempts to get the setting object associated with the provided Table Type
     /// </summary>
-    public static bool TryGetSettings<T>(ETable pType, out ISettings<T> pSettings)
-        where T : IRow
+    public static bool TryGetSettings<T>(ETable pType, out ISettings pSettings)
     {
 #pragma warning disable CS8601 // Possible null reference assignment.
-        bool found = INSTANCE._settings.TryGetValue(pType, out ISettings settings);
-        if (!found)
-        {
-            pSettings = null!;
-            return false;
-        }
-
-        pSettings = settings as ISettings<T>;
-        return true;
+        return INSTANCE._settings.TryGetValue(pType, out pSettings);
 #pragma warning restore CS8601 // Possible null reference assignment.
     }
 

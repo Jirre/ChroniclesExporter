@@ -1,4 +1,5 @@
 ﻿using ChroniclesExporter.Settings;
+using ChroniclesExporter.Table;
 
 namespace ChroniclesExporter.Strategy.Conditions;
 
@@ -7,17 +8,17 @@ public class ConditionSettings : ISettings<Condition, ConditionReader, Condition
 {
     public string FilePath => "Conditions";
 
-    public string Url(Condition pData)
+    public string Url(IRow pData)
     {
         return "/Conditions?id={0}";
     }
 
-    public string LinkClasses(Condition pData)
+    public string LinkClasses(IRow pData)
     {
         return "link-condition tooltip tooltip-condition";
     }
 
-    public string LinkIcon(Condition pData)
+    public string LinkIcon(IRow pData)
     {
         return "condition";
     }

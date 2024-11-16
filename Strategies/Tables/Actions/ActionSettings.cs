@@ -1,4 +1,5 @@
 ﻿using ChroniclesExporter.Settings;
+using ChroniclesExporter.Table;
 
 namespace ChroniclesExporter.Strategy.Actions;
 
@@ -7,19 +8,22 @@ public class ActionSettings : ISettings<Action, ActionReader, ActionWriter>
 {
     public string FilePath => "Actions";
 
-    public string Url(Action pAction)
+    public string Url(IRow pAction)
     {
         return "/Actions?id={0}";
     }
 
-    public string LinkClasses(Action pAction)
+    public string LinkClasses(IRow pAction)
     {
         return "link-action tooltip tooltip-action";
     }
 
-    public string LinkIcon(Action pAction)
+    public string LinkIcon(IRow pAction)
     {
-        return pAction.Type switch
+        if (pAction is not Action action)
+            return "action";
+        
+        return action.Type switch
         {
             EActionTypes.Action => "action",
             EActionTypes.Bonus => "action-bonus",

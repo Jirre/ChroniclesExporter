@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using ChroniclesExporter.Log;
 using ChroniclesExporter.Settings;
 using ChroniclesExporter.Table;
 using ChroniclesExporter.Utility;
@@ -13,16 +14,16 @@ public static partial class ParserLocalLink
     private static partial Regex FileRegex();
 
     [LinkParseFunction(99)]
-    private static bool GetLocalLink(string pHref, ref HtmlDocument pDoc, ref HtmlNode pNode)
+    private static bool GetLocalLink(string pHref, ref HtmlDocument pDoc, HtmlNode pNode)
     {
         if (!pHref.TryMatch(FileRegex(), out Match localMatch)) return false;
         HtmlNode parent = pNode.ParentNode;
         
         HtmlNode link = pDoc.CreateElement("LocalLink");
         link.SetAttributeValue("target", localMatch.Groups[1].Value);
-
+        
         if (TableHandler.TryGet(new Guid(localMatch.Groups[1].Value), out TableEntry entry) &&
-            SettingsHandler.TryGetSettings(entry.Id, out ISettings<IRow> settings) &&
+            SettingsHandler.TryGetSettings(entry.Id, out ISettings settings) &&
             entry.Row != null)
             link.SetAttributeValue("icon", settings.LinkIcon(entry.Row));
 

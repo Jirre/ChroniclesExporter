@@ -7,7 +7,7 @@ namespace ChroniclesExporter.Parse;
 
 public partial class ParseHandler // Links
 {
-    private delegate bool LinkParseMethod(string pHref, ref HtmlDocument pDoc, ref HtmlNode pNode);
+    private delegate bool LinkParseMethod(string pHref, ref HtmlDocument pDoc, HtmlNode pNode);
     private IOrderedEnumerable<LinkParseMethod> _linkParseMethods = null!;
     
     private void CreateLinkParseMethods()
@@ -39,7 +39,7 @@ public partial class ParseHandler // Links
         {
             try
             {
-                if (parser(pHref, ref pDoc, ref pNode))
+                if (parser(pHref, ref pDoc, pNode))
                     return;
             }
             catch (Exception e)
