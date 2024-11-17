@@ -51,7 +51,7 @@ public abstract class DbTableWriter<T> : DbWriter<IRow>, ITableWriter
         }
         catch (NpgsqlException ex)
         {
-            LogHandler.Error(ELogCode.MySqlError, ex.ToString());
+            LogHandler.Error(ELogCode.DatabaseError, ex.ToString());
         }
     }
 

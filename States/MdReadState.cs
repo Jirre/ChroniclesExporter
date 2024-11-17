@@ -13,19 +13,21 @@ public class MdReadState(StateMachine<EProgramState> pStateMachine, EProgramStat
     protected override EProgramState DefaultCompleteState => EProgramState.DbWrite;
     protected override ELogCode DefaultErrorCode => ELogCode.MdReaderError;
 
+    private Dictionary<ETable, List<string>>? _files;
+
     protected override List<Task> BuildHandlers()
     {
-        Dictionary<ETable, List<string>> files = new();
+        _files = new Dictionary<ETable, List<string>>();
         foreach (TableEntry table in TableHandler.Entries)
         {
-            if (!files.ContainsKey(table.Id))
-                files.Add(table.Id, new List<string>());
+            if (!_files.ContainsKey(table.Id))
+                _files.Add(table.Id, new List<string>());
 
-            files[table.Id].Add(table.Path);
+            _files[table.Id].Add(table.Path);
         }
 
         List<Task> tasks = new();
-        foreach (KeyValuePair<ETable, List<string>> kvp in files)
+        foreach (KeyValuePair<ETable, List<string>> kvp in _files)
         {
             if (!SettingsHandler.TryGetSettings(kvp.Key, out ISettings settings))
                 continue;
@@ -36,6 +38,25 @@ public class MdReadState(StateMachine<EProgramState> pStateMachine, EProgramStat
         }
 
         return tasks;
+    }
+
+    protected override void OnComplete()
+    {
+        foreach (KeyValuePair<ETable, IReader> kvp in Handlers)
+        {
+            if (kvp.Value is not IMdReader mdReader ||
+                _files == null || 
+                _files.TryGetValue(kvp.Key, out List<string>? fileList))
+            {
+                LogHandler.Warning(ELogCode.HtmlParserError, $"{kvp.Key}: {kvp.Value}, {_files!.ContainsKey(kvp.Key)}");
+                continue;
+            }
+
+            if (fileList != null) 
+                mdReader.ModifyHtml(fileList.ToArray());
+        }
+
+        base.OnComplete();
     }
 
     protected override void OnHeaderDraw()

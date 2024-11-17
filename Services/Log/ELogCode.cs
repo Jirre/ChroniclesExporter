@@ -9,6 +9,7 @@ public enum ELogCode
     IndexerGuidCollision = 205,
 
     MdReaderError = 300,
+    HtmlParserError = 310,
 
-    MySqlError = 400
+    DatabaseError = 400
 }

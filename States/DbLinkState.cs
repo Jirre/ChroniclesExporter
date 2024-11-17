@@ -12,7 +12,7 @@ public class DbLinkState(StateMachine<EProgramState> pStateMachine, EProgramStat
     AProgressState<ELink, IWriter>(pStateMachine, pId)
 {
     protected override EProgramState DefaultCompleteState => EProgramState.Log;
-    protected override ELogCode DefaultErrorCode => ELogCode.MySqlError;
+    protected override ELogCode DefaultErrorCode => ELogCode.DatabaseError;
 
     protected override List<Task> BuildHandlers()
     {

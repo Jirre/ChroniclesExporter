@@ -12,7 +12,7 @@ public class DbWriteState(StateMachine<EProgramState> pStateMachine, EProgramSta
     AProgressState<ETable, IWriter>(pStateMachine, pId)
 {
     protected override EProgramState DefaultCompleteState => EProgramState.DbLink;
-    protected override ELogCode DefaultErrorCode => ELogCode.MySqlError;
+    protected override ELogCode DefaultErrorCode => ELogCode.DatabaseError;
 
     protected override List<Task> BuildHandlers()
     {

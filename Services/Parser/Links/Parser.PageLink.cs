@@ -12,25 +12,26 @@ public static partial class ParserPageLink
     private static partial Regex UrlRegex();
     
     [LinkParseFunction(100)]
+    // ReSharper disable once UnusedMember.Local
     private static bool GetPageLink(string pHref, ref HtmlDocument pDoc, HtmlNode pNode)
     {
         if (!pHref.TryMatch(UrlRegex(), out Match urlMatch)) return false;
         HtmlNode parent = pNode.ParentNode;
-        
+        Guid guid = new Guid(urlMatch.Groups[1].Value);
         HtmlNode link = pDoc.CreateElement("PageLink");
-        if (TableHandler.TryGet(new Guid(urlMatch.Groups[1].Value), out TableEntry entry) &&
+        if (TableHandler.TryGet(guid, out TableEntry entry) &&
             SettingsHandler.TryGetSettings(entry.Id, out ISettings settings) &&
             entry.Row != null)
         {
             link.SetAttributeValue("target",
                 string.IsNullOrWhiteSpace(settings.Url(entry.Row))
-                    ? urlMatch.Groups[1].Value
-                    : string.Format(settings.Url(entry.Row), urlMatch.Groups[1].Value));
+                    ? guid.ToString()
+                    : string.Format(settings.Url(entry.Row), guid.ToString()));
             link.SetAttributeValue("icon", settings.LinkIcon(entry.Row));
         }
         else
         {
-            link.SetAttributeValue("target", urlMatch.Groups[1].Value);
+            link.SetAttributeValue("target", guid.ToString());
         }
 
         link.InnerHtml = pNode.InnerHtml;

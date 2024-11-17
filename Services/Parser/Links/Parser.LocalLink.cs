@@ -14,15 +14,17 @@ public static partial class ParserLocalLink
     private static partial Regex FileRegex();
 
     [LinkParseFunction(99)]
+    // ReSharper disable once UnusedMember.Local
     private static bool GetLocalLink(string pHref, ref HtmlDocument pDoc, HtmlNode pNode)
     {
         if (!pHref.TryMatch(FileRegex(), out Match localMatch)) return false;
         HtmlNode parent = pNode.ParentNode;
         
         HtmlNode link = pDoc.CreateElement("LocalLink");
-        link.SetAttributeValue("target", localMatch.Groups[1].Value);
+        Guid guid = new Guid(localMatch.Groups[1].Value);
+        link.SetAttributeValue("target", guid.ToString());
         
-        if (TableHandler.TryGet(new Guid(localMatch.Groups[1].Value), out TableEntry entry) &&
+        if (TableHandler.TryGet(guid, out TableEntry entry) &&
             SettingsHandler.TryGetSettings(entry.Id, out ISettings settings) &&
             entry.Row != null)
             link.SetAttributeValue("icon", settings.LinkIcon(entry.Row));

@@ -46,7 +46,7 @@ public abstract class DbLinkWriter : DbWriter<ILink>, ILinkWriter
         }
         catch (NpgsqlException ex)
         {
-            LogHandler.Error(ELogCode.MySqlError, ex.ToString());
+            LogHandler.Error(ELogCode.DatabaseError, ex.ToString());
         }
     }
 

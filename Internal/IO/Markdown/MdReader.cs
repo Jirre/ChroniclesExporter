@@ -7,7 +7,12 @@ using Markdig;
 
 namespace ChroniclesExporter.IO;
 
-public abstract class MdReader<T> : IReader
+public interface IMdReader : IReader
+{
+    void ModifyHtml(string[] pFiles);
+}
+
+public abstract class MdReader<T> : IMdReader
     where T : class, IRow
 {
     private readonly MarkdownPipeline _pipelineBuilder =
@@ -56,18 +61,30 @@ public abstract class MdReader<T> : IReader
         }
 
         string html = Markdown.ToHtml(content, _pipelineBuilder);
-        HtmlDocument htmlDoc = new();
-        htmlDoc.LoadHtml(html);
-        ModifyHtml(ref htmlDoc);
-        row.Content = htmlDoc.DocumentNode.OuterHtml;
-
+        row.Content = html;
         entry.Row = row;
         Progress++;
     }
 
-    private static void ModifyHtml(ref HtmlDocument pDoc)
+    public void ModifyHtml(string[] pFiles)
     {
-        AddLinkComponents(ref pDoc);
+        foreach (string file in pFiles)
+        {
+            if (!File.Exists(file))
+            {
+                LogHandler.Warning(ELogCode.FileNotFound, $"Path: {file}");
+                continue;
+            }
+            if (!StringUtility.TryExtractGuidFromString(file, out Guid id) ||
+                    !TableHandler.TryGet(id, out TableEntry entry) ||
+                    entry.Row == null)
+                continue;
+            
+            HtmlDocument htmlDoc = new();
+            htmlDoc.LoadHtml(entry.Row.Content);
+            AddLinkComponents(ref htmlDoc);
+            entry.Row.Content = htmlDoc.DocumentNode.OuterHtml;
+        }
     }
 
     private static void AddLinkComponents(ref HtmlDocument pDoc)
