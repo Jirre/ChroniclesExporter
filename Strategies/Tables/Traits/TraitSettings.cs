@@ -13,11 +13,6 @@ public class TraitSettings : ISettings<Trait, TraitReader, TraitWriter>
         return "/Traits?id={0}";
     }
 
-    public string LinkClasses(IRow pData)
-    {
-        return "link-trait tooltip tooltip-trait";
-    }
-
     public string LinkIcon(IRow pData)
     {
         return "trait";

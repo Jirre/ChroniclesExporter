@@ -13,8 +13,9 @@ public interface ISettings
     Type Writer { get; }
     
     string Url(IRow pData);
-    string LinkClasses(IRow pData);
+    string LinkClasses(IRow pData) => "";
     string LinkIcon(IRow pData);
+    string LinkIconClasses(IRow pData) => "";
 }
 
 public interface ISettings<in TData, TReader, TWriter> : ISettings

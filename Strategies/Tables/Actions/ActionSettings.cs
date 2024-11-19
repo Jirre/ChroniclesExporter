@@ -12,12 +12,7 @@ public class ActionSettings : ISettings<Action, ActionReader, ActionWriter>
     {
         return "/Actions?id={0}";
     }
-
-    public string LinkClasses(IRow pAction)
-    {
-        return "link-action tooltip tooltip-action";
-    }
-
+    
     public string LinkIcon(IRow pAction)
     {
         if (pAction is not Action action)

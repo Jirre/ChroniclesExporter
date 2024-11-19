@@ -83,6 +83,7 @@ public abstract class MdReader<T> : IMdReader
             HtmlDocument htmlDoc = new();
             htmlDoc.LoadHtml(entry.Row.Content);
             AddLinkComponents(ref htmlDoc);
+            ConvertImageComponents(ref htmlDoc);
             entry.Row.Content = htmlDoc.DocumentNode.OuterHtml;
         }
     }
@@ -97,6 +98,19 @@ public abstract class MdReader<T> : IMdReader
         {
             string href = node.GetAttributeValue("href", "");
             ParseHandler.ParseLink(href, ref pDoc, node);
+        }
+    }
+    
+    private static void ConvertImageComponents(ref HtmlDocument pDoc)
+    {
+        HtmlNodeCollection anchorNodes = pDoc.DocumentNode.SelectNodes("//img");
+        if (anchorNodes == null)
+            return;
+        
+        foreach (HtmlNode node in anchorNodes)
+        {
+            string src = node.GetAttributeValue("src", "");
+            ParseHandler.ParseImage(src, ref pDoc, node);
         }
     }
 

@@ -23,5 +23,22 @@ public class SkillSettings : ISettings<Skill, SkillReader, SkillWriter>
         return "skill";
     }
 
+    public string LinkIconClasses(IRow pData)
+    {
+        if (pData is not Skill skill)
+            return "";
+
+        return skill.Ability switch
+        {
+            EAbilities.Strength => "strength",
+            EAbilities.Dexterity => "dexterity",
+            EAbilities.Intelligence => "intelligence",
+            EAbilities.Wisdom => "wisdom",
+            EAbilities.Charisma => "charisma",
+            EAbilities.Constitution => "constitution",
+            _ => throw new ArgumentOutOfRangeException($"Unknown Abilities: {skill.Ability}")
+        };
+    }
+
     public ETable[] Dependencies => [];
 }

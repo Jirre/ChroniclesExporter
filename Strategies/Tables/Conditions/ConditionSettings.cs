@@ -13,16 +13,11 @@ public class ConditionSettings : ISettings<Condition, ConditionReader, Condition
         return "/Conditions?id={0}";
     }
 
-    public string LinkClasses(IRow pData)
-    {
-        return "link-condition tooltip tooltip-condition";
-    }
-
     public string LinkIcon(IRow pData)
     {
         return "condition";
     }
-
+    
     public ETable[] Dependencies =>
     [
         ETable.Traits

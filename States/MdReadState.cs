@@ -46,14 +46,13 @@ public class MdReadState(StateMachine<EProgramState> pStateMachine, EProgramStat
         {
             if (kvp.Value is not IMdReader mdReader ||
                 _files == null || 
-                _files.TryGetValue(kvp.Key, out List<string>? fileList))
+                !_files.TryGetValue(kvp.Key, out List<string>? fileList))
             {
                 LogHandler.Warning(ELogCode.HtmlParserError, $"{kvp.Key}: {kvp.Value}, {_files!.ContainsKey(kvp.Key)}");
                 continue;
             }
-
-            if (fileList != null) 
-                mdReader.ModifyHtml(fileList.ToArray());
+            
+            mdReader.ModifyHtml(fileList.ToArray());
         }
 
         base.OnComplete();

@@ -23,11 +23,16 @@ public static partial class ParserLocalLink
         HtmlNode link = pDoc.CreateElement("LocalLink");
         Guid guid = new Guid(localMatch.Groups[1].Value);
         link.SetAttributeValue("target", guid.ToString());
-        
+
         if (TableHandler.TryGet(guid, out TableEntry entry) &&
             SettingsHandler.TryGetSettings(entry.Id, out ISettings settings) &&
             entry.Row != null)
+        {
             link.SetAttributeValue("icon", settings.LinkIcon(entry.Row));
+            string iconClasses = settings.LinkIconClasses(entry.Row);
+            if (!string.IsNullOrWhiteSpace(iconClasses))
+                link.SetAttributeValue("iconClasses", iconClasses);
+        }
 
         link.InnerHtml = pNode.InnerHtml;
         parent.ReplaceChild(link, pNode);

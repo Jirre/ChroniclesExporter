@@ -8,5 +8,6 @@ public partial class ParseHandler
     private ParseHandler()
     {
         CreateLinkParseMethods();
+        CreateImageParseMethods();
     }
 }

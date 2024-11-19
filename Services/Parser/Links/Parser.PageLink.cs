@@ -28,6 +28,9 @@ public static partial class ParserPageLink
                     ? guid.ToString()
                     : string.Format(settings.Url(entry.Row), guid.ToString()));
             link.SetAttributeValue("icon", settings.LinkIcon(entry.Row));
+            string iconClasses = settings.LinkIconClasses(entry.Row);
+            if (!string.IsNullOrWhiteSpace(iconClasses))
+                link.SetAttributeValue("iconClasses", iconClasses);
         }
         else
         {
