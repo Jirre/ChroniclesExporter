@@ -1,5 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-using ChroniclesExporter.Log;
 using ChroniclesExporter.Settings;
 using ChroniclesExporter.Table;
 using ChroniclesExporter.Utility;

@@ -16,7 +16,7 @@ public abstract class MdReader<T> : IMdReader
     where T : class, IRow
 {
     private readonly MarkdownPipeline _pipelineBuilder =
-        new MarkdownPipelineBuilder().UseSoftlineBreakAsHardlineBreak().Build();
+        new MarkdownPipelineBuilder().UseSoftlineBreakAsHardlineBreak().UsePipeTables().Build();
     
     public int Progress { get; private set; }
     public int TaskCount { get; private set; }
