@@ -22,5 +22,12 @@ public enum ELink
     SubclassSaves,
     SubclassTraits,
 
-    TraitCategories
+    #region Equipment
+
+    AmmunitionTraits,
+    ArmorTraits,
+    ShieldTraits,
+    WeaponTraits,
+
+    #endregion
 }

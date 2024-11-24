@@ -12,5 +12,14 @@ public enum ETable
     Races,
     Skills,
     Subclasses,
-    Traits
+    Traits,
+
+    #region Equipment
+
+    Ammunition,
+    Armor,
+    Shield,
+    Weapon,
+
+    #endregion
 }

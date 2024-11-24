@@ -54,6 +54,31 @@ public static partial class StringUtility
             ? pValue.Remove(0, pSubstring.Length).TrimStart(' ')
             : pValue;
     }
+
+    public static bool TryTrimStart(this string pValue, string pSubstring, out string pResult)
+    {
+        if (pValue.StartsWith(pSubstring, true, CultureInfo.InvariantCulture))
+        {
+            pResult = pValue.Remove(0, pSubstring.Length).Trim();
+            return true;
+        }
+
+        pResult = "";
+        return false;
+    }
+    
+    public static bool TryTrimStart(this string pValue, string pSubstring, out string pResult, bool pIgnoreCase,
+        CultureInfo? pCultureInfo)
+    {
+        if (pValue.StartsWith(pSubstring, pIgnoreCase, pCultureInfo))
+        {
+            pResult = pValue.Remove(0, pSubstring.Length).Trim();
+            return true;
+        }
+
+        pResult = "";
+        return false;
+    }
     
     public static bool TryMatch(this string pValue, Regex pRegex, out Match pMatch)
     {

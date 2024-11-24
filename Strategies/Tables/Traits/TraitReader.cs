@@ -12,10 +12,16 @@ public class TraitReader : MdReader<Trait>
         {
             pLine = pLine.TrimStart("Categories:").Trim();
             string[] traits = pLine.Split(',');
+            List<ETraitCategories> categories = new List<ETraitCategories>();
             foreach (string trait in traits)
             {
                 if (Enum.TryParse(trait.Trim(), true, out ETraitCategories category))
-                    TableHandler.RegisterLink(ELink.TraitCategories, new CategoryLink(pData.Id, category));
+                    categories.Add(category);
+            }
+
+            if (categories.Count > 0)
+            {
+                pData.Categories = categories.ToArray();
             }
             return true;
         }

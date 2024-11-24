@@ -23,4 +23,10 @@ public static class MarkdownUtility
 
         return guidList.ToArray();
     }
+
+    public static bool TryGetLinkGuids(string pLine, out Guid[] pGuids, char pSeparator = ',')
+    {
+        pGuids = GetLinkGuids(pLine);
+        return pGuids.Length > 0;
+    }
 }

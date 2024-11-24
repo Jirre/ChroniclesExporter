@@ -1,6 +1,6 @@
 ﻿using ChroniclesExporter.IO.Database;
 
-namespace ChroniclesExporter.Strategy.Links;
+namespace ChroniclesExporter.Strategy.Conditions;
 
 // ReSharper disable once InconsistentNaming
 public class Condition_Traits : DbLinkWriter

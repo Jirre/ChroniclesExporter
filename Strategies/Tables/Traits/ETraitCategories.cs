@@ -8,11 +8,14 @@ public enum ETraitCategories
     condition,
     language,
     movementType,
-    CreatureType,
+    creatureType,
     senses,
     skill,
     spell,
     spellComponent,
     spellSchool,
+    
+    // Equipment
+    armor,
     weapon,
 }

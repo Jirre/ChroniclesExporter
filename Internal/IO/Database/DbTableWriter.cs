@@ -38,6 +38,7 @@ public abstract class DbTableWriter<T> : DbWriter<IRow>, ITableWriter
             foreach (string field in Fields) fields += field + ", ";
             fields = fields.Trim(' ', ',');
 
+            string sql = $"COPY {TableName} ({fields}) FROM STDIN (FORMAT BINARY)";
             await using NpgsqlBinaryImporter importer = await connection.BeginBinaryImportAsync(
                 $"COPY {TableName} ({fields}) FROM STDIN (FORMAT BINARY)");
             foreach (IRow query in pQueries)
@@ -57,7 +58,7 @@ public abstract class DbTableWriter<T> : DbWriter<IRow>, ITableWriter
 
     private async Task WaitForDependencies()
     {
-        if (!SettingsHandler.TryGetSettings<T>(TableId, out ISettings settings) ||
+        if (!SettingsHandler.TryGetSettings(TableId, out ISettings settings) ||
             settings.Dependencies.Length == 0)
             return;
 
