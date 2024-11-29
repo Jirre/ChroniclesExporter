@@ -11,10 +11,6 @@ public enum ELink
 
     LanguageTraits,
 
-    RaceFeatures,
-    RaceLanguages,
-    RaceTraits,
-
     SkillTraits,
 
     SubclassAbilities,
@@ -28,6 +24,15 @@ public enum ELink
     ArmorTraits,
     ShieldTraits,
     WeaponTraits,
+
+    #endregion
+
+    #region Race
+
+    RaceCreatureTypes,
+    RaceFeatures,
+    RaceLanguages,
+    RaceTraits,
 
     #endregion
 }

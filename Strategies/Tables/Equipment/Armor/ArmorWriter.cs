@@ -8,8 +8,8 @@ public class ArmorWriter : DbTableWriter<Armor>
     protected override ETable TableId => ETable.Armor;
     protected override string TableName => "armors";
 
-    protected override string[] Fields => new[]
-        {"id", "name", "content", "category", "cost", "weight", "armor_class", "use_dex", "max_dex", "min_str", "speed_penalty"};
+    protected override string[] Fields => ["id", "name", "content", "category", "cost", "weight", "armor_class", "use_dex", "max_dex", "min_str", "speed_penalty"
+    ];
     protected override async Task ImportRow(NpgsqlBinaryImporter pImporter, Armor pData)
     {
         await pImporter.WriteAsync(pData.Id.ToByteArray(true));

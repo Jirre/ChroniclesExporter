@@ -1,4 +1,5 @@
-﻿using ChroniclesExporter.Log;
+﻿using System.Text.RegularExpressions;
+using ChroniclesExporter.Log;
 using ChroniclesExporter.Parse;
 using ChroniclesExporter.Table;
 using ChroniclesExporter.Utility;
@@ -12,7 +13,7 @@ public interface IMdReader : IReader
     void ModifyHtml(string[] pFiles);
 }
 
-public abstract class MdReader<T> : IMdReader
+public abstract partial class MdReader<T> : IMdReader
     where T : class, IRow
 {
     private readonly MarkdownPipeline _pipelineBuilder =
@@ -116,13 +117,16 @@ public abstract class MdReader<T> : IMdReader
 
     #region --- Properties ---
 
+    [GeneratedRegex(@"\[.*?\]")]
+    private static partial Regex NameRegex();
+    
     private static bool TryGetName(string pLine, ref T pData)
     {
         if (!pLine.StartsWith("# ") ||
             !string.IsNullOrWhiteSpace(pData.Name))
             return false;
-
-        pData.Name = pLine.TrimStart("# ");
+        
+        pData.Name = NameRegex().Replace(pLine.TrimStart("# "), "").Replace("  ", " ").Trim();
         return true;
     }
 
@@ -130,7 +134,6 @@ public abstract class MdReader<T> : IMdReader
     {
         return false;
     }
-    
 
     #endregion
 

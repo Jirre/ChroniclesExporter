@@ -4,15 +4,13 @@ public enum ETable
 {
     Actions,
     Classes,
-    ClassFeatures,
     Conditions,
+    Features,
     Languages,
     LanguageScripts,
-    RaceFeatures,
     Races,
     Skills,
     Subclasses,
-    Traits,
 
     #region Equipment
 
@@ -20,6 +18,13 @@ public enum ETable
     Armor,
     Shield,
     Weapon,
+
+    #endregion
+
+    #region Properties
+
+    Traits,
+    CreatureTypes,
 
     #endregion
 }

@@ -8,5 +8,5 @@ public class Language_Traits : DbLinkWriter
     protected override ELink LinkId => ELink.LanguageTraits;
 
     protected override string TableName => "languages_traits";
-    protected override string[] Fields => new[] {"language_id", "trait_id"};
+    protected override string[] Fields => ["language_id", "trait_id"];
 }
