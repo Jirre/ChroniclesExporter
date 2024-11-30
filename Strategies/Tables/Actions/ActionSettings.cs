@@ -4,7 +4,7 @@ using ChroniclesExporter.Table;
 namespace ChroniclesExporter.Strategy.Actions;
 
 [Settings(ETable.Actions)]
-public class ActionSettings : ISettings<Action, ActionReader, ActionWriter>
+public class ActionSettings : ISettings<ActionReader, ActionWriter>
 {
     public string FilePath => "Actions";
 

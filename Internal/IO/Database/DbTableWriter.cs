@@ -37,8 +37,7 @@ public abstract class DbTableWriter<T> : DbWriter<IRow>, ITableWriter
             string fields = "";
             foreach (string field in Fields) fields += field + ", ";
             fields = fields.Trim(' ', ',');
-
-            string sql = $"COPY {TableName} ({fields}) FROM STDIN (FORMAT BINARY)";
+            
             await using NpgsqlBinaryImporter importer = await connection.BeginBinaryImportAsync(
                 $"COPY {TableName} ({fields}) FROM STDIN (FORMAT BINARY)");
             foreach (IRow query in pQueries)

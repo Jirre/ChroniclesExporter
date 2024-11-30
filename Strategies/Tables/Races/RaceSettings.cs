@@ -4,7 +4,7 @@ using ChroniclesExporter.Table;
 namespace ChroniclesExporter.Tables.Races;
 
 [Settings(ETable.Races)]
-public class RaceSettings : ISettings<Race, RaceReader, RaceWriter>
+public class RaceSettings : ISettings<RaceReader, RaceWriter>
 {
     public string FilePath => "Races";
 
@@ -26,9 +26,9 @@ public class RaceSettings : ISettings<Race, RaceReader, RaceWriter>
         
         return race.Rarity switch
         {
-            ERarities.common => "grey",
-            ERarities.uncommon => "green",
-            ERarities.rare => "blue",
+            ERarities.Common => "grey",
+            ERarities.Uncommon => "green",
+            ERarities.Rare => "blue",
             _ => throw new ArgumentOutOfRangeException($"Unknown Rarity: {race.Rarity}")
         };
     }

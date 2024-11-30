@@ -4,7 +4,7 @@ using ChroniclesExporter.Table;
 namespace ChroniclesExporter.Tables.Languages;
 
 [Settings(ETable.Languages)]
-public class LanguageSettings : ISettings<Language, LanguageReader, LanguageWriter>
+public class LanguageSettings : ISettings<LanguageReader, LanguageWriter>
 {
     public string FilePath => "Languages";
     public string Url(IRow pData) => "/Languages?id={0}";
@@ -18,9 +18,9 @@ public class LanguageSettings : ISettings<Language, LanguageReader, LanguageWrit
         
         return language.Rarity switch
         {
-            ERarities.common => "grey",
-            ERarities.uncommon => "green",
-            ERarities.rare => "blue",
+            ERarities.Common => "grey",
+            ERarities.Uncommon => "green",
+            ERarities.Rare => "blue",
             _ => throw new ArgumentOutOfRangeException($"Unknown Rarity: {language.Rarity}")
         };
     }

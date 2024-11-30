@@ -4,9 +4,9 @@ using ChroniclesExporter.Table;
 namespace ChroniclesExporter.Strategy.CreatureTypes;
 
 [Settings(ETable.CreatureTypes)]
-public class CreatureTypeSettings : ISettings<CreatureType, CreatureTypeReader, CreatureTypeWriter>
+public class CreatureTypeSettings : ISettings<CreatureTypeReader, CreatureTypeWriter>
 {
-    public string FilePath => "CreatureTypes";
+    public string FilePath => "Properties/CreatureTypes";
 
     public string Url(IRow pData)
     {

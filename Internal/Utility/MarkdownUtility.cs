@@ -1,18 +1,19 @@
-﻿using ChroniclesExporter.IO.Database;
+﻿using System.Numerics;
+using ChroniclesExporter.IO.Database;
 using ChroniclesExporter.Table;
 
 namespace ChroniclesExporter.Utility;
 
 public static class MarkdownUtility
 {
-    public static Guid[] GetLinkGuids(string pLine, char pSeparator = ',')
+    public static bool TryParseLinkGuids(string pLine, string pKey, Action<Guid[]> pOutput, char pSeparator = ',')
     {
-        if (string.IsNullOrWhiteSpace(pLine))
-            return [];
+        if (string.IsNullOrWhiteSpace(pLine) || !pLine.TryTrimStart(pKey, out string guidString))
+            return false;
 
-        string[] urls = pLine.Split(pSeparator);
+        string[] urls = guidString.Split(pSeparator);
         if (urls.Length == 0)
-            return [];
+            return false;
 
         List<Guid> guidList = new();
         foreach (string url in urls)
@@ -22,32 +23,56 @@ public static class MarkdownUtility
                 guidList.Add(guid);
         }
 
-        return guidList.ToArray();
-    }
-
-    public static bool TryGetLinkGuids(string pLine, out Guid[] pGuids, char pSeparator = ',')
-    {
-        pGuids = GetLinkGuids(pLine);
-        return pGuids.Length > 0;
+        pOutput(guidList.ToArray());
+        return true;
     }
 
     public static bool TryRegisterLinks(string pLine, string pKey, ELink pLinkTable, Guid pSourceId)
     {
-        if (!pLine.TryTrimStart(pKey, out string pResult) ||
-            !TryGetLinkGuids(pResult, out Guid[] pGuidS)) return false;
-        
-        foreach (Guid guid in pGuidS)
-        {
-            TableHandler.RegisterLink(pLinkTable, new Link(pSourceId, guid));
-        }
+        return TryParseLinkGuids(pLine, pKey, pGuids =>
+                {
+                    foreach (Guid guid in pGuids)
+                    {
+                        TableHandler.RegisterLink(pLinkTable, new Link(pSourceId, guid));
+                    }
+                });
+    }
 
+    public static bool TryParseString(string pLine, string pKey, Action<String> pOutput, char pSeparator = ',')
+    {
+        if (!pLine.TryTrimStart(pLine, out string pResult)) 
+            return false;
+        
+        pOutput(pResult);
+        return true;
+    }
+    
+    public static bool TryParseNumber<T>(string pLine, string pKey, Action<T> pOutput, 
+        System.Globalization.NumberStyles pStyles = System.Globalization.NumberStyles.Integer, 
+        System.Globalization.NumberFormatInfo? pFormat = null)
+        where T : INumberBase<T>
+    {
+        if (!pLine.TryTrimStart(pKey, out string pStringValue) ||
+            !T.TryParse(pStringValue, pStyles,
+                pFormat ?? System.Globalization.CultureInfo.InvariantCulture.NumberFormat, out T? result)) return false;
+        
+        pOutput(result);
         return true;
     }
 
-    public static bool TryGetEnumArray<T>(string pLine, string pKey, out T[] pResult, char pSeparator = ',') 
+    public static bool TryParseEnum<T>(string pLine, string pKey, Action<T> pOutput)
         where T : struct, Enum
     {
-        pResult = [];
+        if (!pLine.TryTrimStart(pKey, out string pEnumString) ||
+            !Enum.TryParse(pEnumString.Trim(), true, out T result)) return false;
+        
+        pOutput(result);
+        return true;
+    }
+    
+    public static bool TryParseEnumArray<T>(string pLine, string pKey, Action<T[]> pOutput, char pSeparator = ',') 
+        where T : struct, Enum
+    {
         if (!pLine.TryTrimStart(pKey, out string pSizes)) return false;
         
         string[] strings = pSizes.Trim().Split(',');
@@ -57,7 +82,7 @@ public static class MarkdownUtility
             if (Enum.TryParse(s.Trim(), true, out T sizeEnum))
                 result.Add(sizeEnum);
         }
-        pResult = result.ToArray();
-        return result.Count > 0;
+        pOutput(result.ToArray());
+        return true;
     }
 }

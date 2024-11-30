@@ -8,8 +8,7 @@ public class ShieldWriter : DbTableWriter<Shield>
     protected override ETable TableId => ETable.Shield;
     protected override string TableName => "shields";
 
-    protected override string[] Fields => new[]
-        {"id", "name", "content", "cost", "weight", "armor_bonus", "max_dex", "min_str"};
+    protected override string[] Fields => ["id", "name", "content", "cost", "weight", "armor_bonus", "max_dex", "min_str"];
     protected override async Task ImportRow(NpgsqlBinaryImporter pImporter, Shield pData)
     {
         await pImporter.WriteAsync(pData.Id.ToByteArray(true));

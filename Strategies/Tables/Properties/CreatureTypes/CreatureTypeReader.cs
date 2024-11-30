@@ -5,23 +5,9 @@ namespace ChroniclesExporter.Strategy.CreatureTypes;
 
 public class CreatureTypeReader : MdReader<CreatureType>
 {
-    protected override bool TryGetProperties(string pLine, ref CreatureType pData)
+    protected override bool TryGetProperties(string pLine, CreatureType pData)
     {
-        if (pLine.TryTrimStart("Parent:", out string guids))
-        {
-            GetParent(guids, ref pData);
-            return true;
-        }
-
-        return pLine.StartsWith("Children:");
-    }
-    
-    private static void GetParent(string pLine, ref CreatureType pContainer)
-    {
-        Guid[] linkGuids = MarkdownUtility.GetLinkGuids(pLine);
-        if (linkGuids.Length != 1)
-            return;
-        
-        pContainer.Parent = linkGuids[0];
+        return MarkdownUtility.TryParseLinkGuids(pLine,  "Parent:", e => pData.Parent = e[0]) ||
+               pLine.StartsWith("Children:");
     }
 }

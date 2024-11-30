@@ -8,7 +8,7 @@ public class ConditionWriter : DbTableWriter<Condition>
     protected override ETable TableId => ETable.Conditions;
 
     protected override string TableName => "conditions";
-    protected override string[] Fields => new[] {"id", "name", "content"};
+    protected override string[] Fields => ["id", "name", "content"];
 
     protected override async Task ImportRow(NpgsqlBinaryImporter pImporter, Condition pData)
     {

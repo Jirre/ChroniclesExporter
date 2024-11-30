@@ -50,11 +50,11 @@ public abstract partial class MdReader<T> : IMdReader
         for (int i = 0; i < lines.Length; i++)
         {
             string line = lines[i];
-            if (i == 0 && TryGetName(line, ref row))
+            if (i == 0 && TryGetName(line, row))
                 continue;
 
             line = CleanLine(line);
-            if (TryGetProperties(line, ref row) ||
+            if (TryGetProperties(line, row) ||
                 (string.IsNullOrWhiteSpace(line) && string.IsNullOrWhiteSpace(content)))
                 continue;
 
@@ -120,7 +120,7 @@ public abstract partial class MdReader<T> : IMdReader
     [GeneratedRegex(@"\[.*?\]")]
     private static partial Regex NameRegex();
     
-    private static bool TryGetName(string pLine, ref T pData)
+    private static bool TryGetName(string pLine, T pData)
     {
         if (!pLine.StartsWith("# ") ||
             !string.IsNullOrWhiteSpace(pData.Name))
@@ -130,7 +130,7 @@ public abstract partial class MdReader<T> : IMdReader
         return true;
     }
 
-    protected virtual bool TryGetProperties(string pLine, ref T pData)
+    protected virtual bool TryGetProperties(string pLine, T pData)
     {
         return false;
     }

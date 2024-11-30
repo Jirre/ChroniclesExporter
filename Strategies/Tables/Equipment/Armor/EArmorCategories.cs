@@ -5,8 +5,8 @@ namespace ChroniclesExporter.Tables.Armor;
 [DbEnum("armorCategories")]
 public enum EArmorCategories
 {
-    unarmored,
-    light,
-    medium,
-    heavy,
+    Unarmored,
+    Light,
+    Medium,
+    Heavy,
 }
