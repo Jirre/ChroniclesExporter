@@ -4,9 +4,9 @@ using ChroniclesExporter.Table;
 namespace ChroniclesExporter.Tables.Armor;
 
 [Settings(ETable.Armor)]
-public class ArmorSettings : ISettings<Armor, ArmorReader, ArmorWriter>
+public class ArmorSettings : ISettings<ArmorReader, ArmorWriter>
 {
-    public string FilePath => "Armors";
+    public string FilePath => "Equipment/Armors";
     public string Url(IRow pData)
     {
         return "/Armors?id={0}";
@@ -24,10 +24,10 @@ public class ArmorSettings : ISettings<Armor, ArmorReader, ArmorWriter>
         
         return armor.Category switch
         {
-            EArmorCategories.unarmored => "grey",
-            EArmorCategories.light => "green",
-            EArmorCategories.medium => "yellow",
-            EArmorCategories.heavy => "red",
+            EArmorCategories.Unarmored => "grey",
+            EArmorCategories.Light => "green",
+            EArmorCategories.Medium => "yellow",
+            EArmorCategories.Heavy => "red",
             _ => throw new ArgumentOutOfRangeException($"Unknown Group: {armor.Category}")
         };
     }

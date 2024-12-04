@@ -7,7 +7,7 @@ public class LanguageWriter : DbTableWriter<Language>
 {
     protected override ETable TableId => ETable.Languages;
     protected override string TableName => "languages";
-    protected override string[] Fields => new[] {"id", "name", "content", "rarity", "script_id"};
+    protected override string[] Fields => ["id", "name", "content", "rarity", "script_id"];
 
     protected override async Task ImportRow(NpgsqlBinaryImporter pImporter, Language pData)
     {

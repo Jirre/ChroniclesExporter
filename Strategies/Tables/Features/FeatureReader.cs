@@ -5,15 +5,8 @@ namespace ChroniclesExporter.Tables.Features;
 
 public class FeatureReader : MdReader<Feature>
 {
-    protected override bool TryGetProperties(string pLine, ref Feature pData)
+    protected override bool TryGetProperties(string pLine, Feature pData)
     {
-        if (pLine.TryTrimStart("Index:", out string pStringIndex) &&
-            short.TryParse(pStringIndex, out short pResult))
-        {
-            pData.Index = pResult;
-            return true;
-        }
-        
-        return false;
+        return MarkdownUtility.TryParseNumber<short>(pLine, "Index:", e => pData.Index = e);
     }
 }

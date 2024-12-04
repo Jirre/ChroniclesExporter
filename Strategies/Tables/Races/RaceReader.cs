@@ -5,36 +5,13 @@ namespace ChroniclesExporter.Tables.Races;
 
 public class RaceReader : MdReader<Race>
 {
-    protected override bool TryGetProperties(string pLine, ref Race pData)
+    protected override bool TryGetProperties(string pLine, Race pData)
     {
-        if (pLine.TryTrimStart("Rarity:", out string pRarity) &&
-            Enum.TryParse(pRarity, true, out ERarities pRarityEnum))
-        {
-            pData.Rarity = pRarityEnum;
-            return true;
-        }
-        
-        if (pLine.TryTrimStart("Ability:", out string pAbility) &&
-            Enum.TryParse(pAbility, true, out EAbilities pAbilityEnum))
-        {
-            pData.Ability = pAbilityEnum;
-            return true;
-        }
-
-        if (MarkdownUtility.TryGetEnumArray(pLine, "Sizes:", out ESizes[] pResult))
-        {
-            pData.Sizes = pResult;
-            return true;
-        }
-        
-        if (pLine.TryTrimStart("Speed:", out string pSpeed) &&
-            short.TryParse(pSpeed, out short pSpeedInt))
-        {
-            pData.Speed = pSpeedInt;
-            return true;
-        }
-
-        return MarkdownUtility.TryRegisterLinks(pLine, "Creature Types:", ELink.RaceCreatureTypes, pData.Id) ||
+        return MarkdownUtility.TryParseEnum<ERarities>(pLine, "Rarity:", e => pData.Rarity = e) ||
+               MarkdownUtility.TryParseEnum<EAbilities>(pLine, "Ability:", e => pData.Ability = e) ||
+               MarkdownUtility.TryParseEnumArray<ESizes>(pLine, "Sizes:", e => pData.Sizes = e) ||
+               MarkdownUtility.TryParseNumber<short>(pLine, "Speed:", e => pData.Speed = e) ||
+               MarkdownUtility.TryRegisterLinks(pLine, "Creature Types:", ELink.RaceCreatureTypes, pData.Id) ||
                MarkdownUtility.TryRegisterLinks(pLine, "Features:", ELink.RaceFeatures, pData.Id) ||
                MarkdownUtility.TryRegisterLinks(pLine, "Languages:", ELink.RaceLanguages, pData.Id) ||
                MarkdownUtility.TryRegisterLinks(pLine, "Traits:", ELink.RaceTraits, pData.Id);

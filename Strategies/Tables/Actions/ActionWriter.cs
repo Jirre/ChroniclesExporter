@@ -7,7 +7,7 @@ public class ActionWriter : DbTableWriter<Action>
 {
     protected override ETable TableId => ETable.Actions;
     protected override string TableName => "actions";
-    protected override string[] Fields => new[] {"id", "name", "details", "type", "content"};
+    protected override string[] Fields => ["id", "name", "details", "type", "content"];
 
     protected override async Task ImportRow(NpgsqlBinaryImporter pImporter, Action pData)
     {

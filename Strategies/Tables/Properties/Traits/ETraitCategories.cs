@@ -5,17 +5,17 @@ namespace ChroniclesExporter.Strategy.Traits;
 [DbEnum("traitCategories")]
 public enum ETraitCategories
 {
-    condition,
-    language,
-    movementType,
-    creatureType,
-    senses,
-    skill,
-    spell,
-    spellComponent,
-    spellSchool,
+    Condition,
+    Language,
+    MovementType,
+    CreatureType,
+    Senses,
+    Skill,
+    Spell,
+    SpellComponent,
+    SpellSchool,
     
     // Equipment
-    armor,
-    weapon,
+    Armor,
+    Weapon,
 }

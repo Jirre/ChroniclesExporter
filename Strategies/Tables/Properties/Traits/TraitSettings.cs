@@ -4,9 +4,9 @@ using ChroniclesExporter.Table;
 namespace ChroniclesExporter.Strategy.Traits;
 
 [Settings(ETable.Traits)]
-public class TraitSettings : ISettings<Trait, TraitReader, TraitWriter>
+public class TraitSettings : ISettings<TraitReader, TraitWriter>
 {
-    public string FilePath => "Traits";
+    public string FilePath => "Properties/Traits";
 
     public string Url(IRow pData)
     {

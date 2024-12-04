@@ -5,7 +5,7 @@ namespace ChroniclesExporter;
 [DbEnum("rarities")]
 public enum ERarities
 {
-    common,
-    uncommon,
-    rare,
+    Common,
+    Uncommon,
+    Rare,
 }

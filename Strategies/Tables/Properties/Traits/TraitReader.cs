@@ -5,21 +5,9 @@ namespace ChroniclesExporter.Strategy.Traits;
 
 public class TraitReader : MdReader<Trait>
 {
-    protected override bool TryGetProperties(string pLine, ref Trait pData)
+    protected override bool TryGetProperties(string pLine, Trait pData)
     {
-        if (MarkdownUtility.TryGetEnumArray(pLine, "Categories:", out ETraitCategories[] categories))
-        {
-            pData.Categories = categories;
-            return true;
-        }
-        
-        if (pLine.TryTrimStart("Index:", out string pIndex) &&
-            int.TryParse(pIndex, out int pIntIndex))
-        {
-            pData.Priority = pIntIndex;
-            return true;
-        }
-
-        return false;
+        return MarkdownUtility.TryParseEnumArray<ETraitCategories>(pLine, "Categories:", e => pData.Categories = e) ||
+               MarkdownUtility.TryParseNumber<int>(pLine, "Priority:", e => pData.Priority = e);
     }
 }

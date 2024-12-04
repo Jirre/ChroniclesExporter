@@ -18,8 +18,7 @@ public interface ISettings
     string LinkIconClasses(IRow pData) => "";
 }
 
-public interface ISettings<in TData, TReader, TWriter> : ISettings
-    where TData : IRow
+public interface ISettings<TReader, TWriter> : ISettings
     where TReader : IReader
     where TWriter : DbWriter<IRow>
 {

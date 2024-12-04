@@ -4,7 +4,7 @@ using ChroniclesExporter.Table;
 namespace ChroniclesExporter.Strategy.Conditions;
 
 [Settings(ETable.Conditions)]
-public class ConditionSettings : ISettings<Condition, ConditionReader, ConditionWriter>
+public class ConditionSettings : ISettings<ConditionReader, ConditionWriter>
 {
     public string FilePath => "Conditions";
 

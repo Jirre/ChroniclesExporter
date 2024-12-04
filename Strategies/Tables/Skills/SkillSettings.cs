@@ -4,7 +4,7 @@ using ChroniclesExporter.Table;
 namespace ChroniclesExporter.Strategy.Traits;
 
 [Settings(ETable.Skills)]
-public class SkillSettings : ISettings<Skill, SkillReader, SkillWriter>
+public class SkillSettings : ISettings<SkillReader, SkillWriter>
 {
     public string FilePath => "Skills";
 

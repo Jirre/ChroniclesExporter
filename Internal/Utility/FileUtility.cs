@@ -29,16 +29,13 @@ public static class FileUtility
 #endif
     }
 
-    public static bool TryGetTypeFromPath(string pPath, out ETable pType, int pMaxDepth = 3, bool pLogError = true)
+    public static bool TryGetTypeFromPath(string pPath, out ETable pType, bool pLogError = true)
     {
-        string path = pPath;
-        for (int index = 0;
-             (index < 3 || pMaxDepth <= 0) && path != Path.GetPathRoot(pPath);
-             index++)
+        string? folder = Directory.GetParent(pPath)?.FullName;
+        if (folder?.TryTrimStart(GetDataRoot(), out string subPath) ?? false)
         {
-            path = Directory.GetParent(path)?.FullName ?? "NULL";
-            string fileName = Path.GetFileName(path);
-            if (!string.IsNullOrWhiteSpace(fileName) && SettingsHandler.TryGetTable(fileName, out pType))
+            subPath = subPath.Replace('\\', '/').Trim('/');
+            if (!string.IsNullOrWhiteSpace(subPath) && SettingsHandler.TryGetTable(subPath, out pType))
                 return true;
         }
 
