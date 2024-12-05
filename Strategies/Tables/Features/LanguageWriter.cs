@@ -7,7 +7,7 @@ public class FeatureWriter : DbTableWriter<Feature>
 {
     protected override ETable TableId => ETable.Features;
     protected override string TableName => "features";
-    protected override string[] Fields => ["id", "name", "content", "priority"];
+    protected override string[] Fields => ["id", "name", "content", "priority", "actiontypes"];
 
     protected override async Task ImportRow(NpgsqlBinaryImporter pImporter, Feature pData)
     {
@@ -15,5 +15,6 @@ public class FeatureWriter : DbTableWriter<Feature>
         await pImporter.WriteAsync(pData.Name);
         await pImporter.WriteAsync(pData.Content);
         await pImporter.WriteAsync(pData.Index ?? 0);
+        await pImporter.WriteAsync(pData.Actions);
     }
 }

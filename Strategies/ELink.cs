@@ -27,6 +27,12 @@ public enum ELink
 
     #endregion
 
+    #region Properties
+
+    CreatureTypesFeatures,
+
+    #endregion
+
     #region Race
 
     RaceCreatureTypes,
