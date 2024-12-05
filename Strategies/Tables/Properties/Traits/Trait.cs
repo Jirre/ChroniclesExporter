@@ -9,6 +9,6 @@ public class Trait : IRow
     public string? Name { get; set; }
     public string? Content { get; set; }
     public ETraitCategories[]? Categories { get; set; }
-    public string Icon { get; set; }
-    public string Class { get; set; }
+    public string? Icon { get; set; }
+    public string? Class { get; set; }
 }

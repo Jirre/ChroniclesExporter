@@ -8,5 +8,5 @@ public class Feature : IRow
     public string? Name { get; set; }
     public string? Content { get; set; }
     public short? Index { get; set; }
-    public EActionTypes[] Actions { get; set; }
+    public EActionTypes[]? Actions { get; set; }
 }

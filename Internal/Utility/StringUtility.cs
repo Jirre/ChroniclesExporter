@@ -55,7 +55,7 @@ public static partial class StringUtility
             : pValue;
     }
 
-    public static bool TryTrimStart(this string pValue, string pSubstring, out string pResult)
+    public static bool TryTrimStart(this string pValue, string pSubstring, out string? pResult)
     {
         if (pValue.StartsWith(pSubstring, true, CultureInfo.InvariantCulture))
         {

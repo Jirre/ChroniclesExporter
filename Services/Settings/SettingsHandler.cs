@@ -35,7 +35,7 @@ public class SettingsHandler
     /// <summary>
     ///     Attempts to get the table-id associated with the provided file-path
     /// </summary>
-    public static bool TryGetTable(string pFilePath, out ETable pSettings)
+    public static bool TryGetTable(string? pFilePath, out ETable pSettings)
     {
         pSettings = 0;
         foreach (KeyValuePair<ETable, ISettings> kvp in INSTANCE._settings)

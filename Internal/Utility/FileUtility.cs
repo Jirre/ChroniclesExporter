@@ -32,9 +32,9 @@ public static class FileUtility
     public static bool TryGetTypeFromPath(string pPath, out ETable pType, bool pLogError = true)
     {
         string? folder = Directory.GetParent(pPath)?.FullName;
-        if (folder?.TryTrimStart(GetDataRoot(), out string subPath) ?? false)
+        if (folder?.TryTrimStart(GetDataRoot(), out string? subPath) ?? false)
         {
-            subPath = subPath.Replace('\\', '/').Trim('/');
+            subPath = subPath?.Replace('\\', '/').Trim('/');
             if (!string.IsNullOrWhiteSpace(subPath) && SettingsHandler.TryGetTable(subPath, out pType))
                 return true;
         }

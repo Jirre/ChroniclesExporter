@@ -16,10 +16,10 @@ public static class MarkdownUtility
     /// <returns>Whether the Parse was successful</returns>
     public static bool TryParseLinkGuids(string pLine, string pKey, Action<Guid[]> pOutput, char pSeparator = ',')
     {
-        if (string.IsNullOrWhiteSpace(pLine) || !pLine.TryTrimStart(pKey, out string guidString))
+        if (string.IsNullOrWhiteSpace(pLine) || !pLine.TryTrimStart(pKey, out string? guidString))
             return false;
 
-        string[] urls = guidString.Split(pSeparator);
+        string[] urls = guidString?.Split(pSeparator) ?? [];
         if (urls.Length == 0)
             return true;
 
@@ -61,9 +61,9 @@ public static class MarkdownUtility
     /// <param name="pKey">Field Name used as identifier</param>
     /// <param name="pOutput">Setter which is called if the data is found</param>
     /// <returns>Whether the Parse was successful</returns>
-    public static bool TryParseString(string pLine, string pKey, Action<string> pOutput)
+    public static bool TryParseString(string pLine, string pKey, Action<string?> pOutput)
     {
-        if (!pLine.TryTrimStart(pKey, out string pResult))
+        if (!pLine.TryTrimStart(pKey, out string? pResult))
             return false;
 
         pOutput(pResult);
@@ -85,7 +85,7 @@ public static class MarkdownUtility
         System.Globalization.NumberFormatInfo? pFormat = null)
         where T : INumberBase<T>
     {
-        if (!pLine.TryTrimStart(pKey, out string pStringValue) ||
+        if (!pLine.TryTrimStart(pKey, out string? pStringValue) ||
             !T.TryParse(pStringValue, pStyles,
                 pFormat ?? System.Globalization.CultureInfo.InvariantCulture.NumberFormat, out T? result)) return false;
 
@@ -104,8 +104,8 @@ public static class MarkdownUtility
     public static bool TryParseEnum<T>(string pLine, string pKey, Action<T> pOutput)
         where T : struct, Enum
     {
-        if (!pLine.TryTrimStart(pKey, out string pEnumString) ||
-            !Enum.TryParse(pEnumString.Trim(), true, out T result)) return false;
+        if (!pLine.TryTrimStart(pKey, out string? pEnumString) ||
+            !Enum.TryParse(pEnumString?.Trim(), true, out T result)) return false;
 
         pOutput(result);
         return true;
@@ -123,9 +123,9 @@ public static class MarkdownUtility
     public static bool TryParseEnumArray<T>(string pLine, string pKey, Action<T[]> pOutput, char pSeparator = ',')
         where T : struct, Enum
     {
-        if (!pLine.TryTrimStart(pKey, out string pSizes)) return false;
+        if (!pLine.TryTrimStart(pKey, out string? pSizes)) return false;
 
-        string[] strings = pSizes.Trim().Split(pSeparator);
+        string[] strings = pSizes?.Trim().Split(pSeparator) ?? [];
         List<T> result = [];
         foreach (string s in strings)
         {
