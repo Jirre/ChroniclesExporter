@@ -16,7 +16,7 @@ public class RaceSettings : ISettings<RaceReader, RaceWriter>
         ETable.Traits,
     ];
 
-    public string Url(IRow pData) => "/Races/{1}";
+    public string Url(IRow pData) => "/races/{1}";
 
     public string LinkIcon(IRow pData) => "race";
     public string LinkIconClasses(IRow pData)

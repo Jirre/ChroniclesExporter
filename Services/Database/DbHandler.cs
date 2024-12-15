@@ -42,6 +42,7 @@ public class DbHandler
             $"Username={Username};" +
             $"Password={Password}");
 
+        builder.ConnectionStringBuilder.IncludeErrorDetail = true;
         IEnumerable<Type> enums = ReflectionUtility.GetTypesWithAttribute(typeof(DbEnumAttribute));
 
         foreach (Type e in enums)

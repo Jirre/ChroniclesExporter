@@ -7,7 +7,7 @@ namespace ChroniclesExporter.Tables.Languages;
 public class ScriptSettings : ISettings<ScriptReader, ScriptWriter>
 {
     public string FilePath => "Languages/Language_Scripts";
-    public string Url(IRow pData) => "/Languages?id={0}";
+    public string Url(IRow pData) => "/languages?id={0}";
 
     public string LinkIcon(IRow pData) => "language-script";
 

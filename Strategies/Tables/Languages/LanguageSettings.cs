@@ -7,7 +7,7 @@ namespace ChroniclesExporter.Tables.Languages;
 public class LanguageSettings : ISettings<LanguageReader, LanguageWriter>
 {
     public string FilePath => "Languages";
-    public string Url(IRow pData) => "/Languages?id={0}";
+    public string Url(IRow pData) => "/languages?id={0}";
 
     public string LinkIcon(IRow pData) => "language";
     

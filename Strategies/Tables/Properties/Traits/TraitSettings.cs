@@ -10,7 +10,7 @@ public class TraitSettings : ISettings<TraitReader, TraitWriter>
 
     public string Url(IRow pData)
     {
-        return "/Traits?id={0}";
+        return "/traits/{1}";
     }
 
     public string LinkIcon(IRow pData)

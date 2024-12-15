@@ -10,7 +10,7 @@ public class ConditionSettings : ISettings<ConditionReader, ConditionWriter>
 
     public string Url(IRow pData)
     {
-        return "/Conditions?id={0}";
+        return "/conditions?id={0}";
     }
 
     public string LinkIcon(IRow pData)

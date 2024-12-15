@@ -10,7 +10,7 @@ public class ActionSettings : ISettings<ActionReader, ActionWriter>
 
     public string Url(IRow pAction)
     {
-        return "/Actions?id={0}";
+        return "/actions?id={0}";
     }
     
     public string LinkIcon(IRow pAction)

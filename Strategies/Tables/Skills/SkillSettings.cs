@@ -10,7 +10,7 @@ public class SkillSettings : ISettings<SkillReader, SkillWriter>
 
     public string Url(IRow pData)
     {
-        return "/Skills?id={0}";
+        return "/skills?id={0}";
     }
 
     public string LinkClasses(IRow pData)

@@ -1,5 +1,7 @@
 ﻿using System.Numerics;
+using System.Text.RegularExpressions;
 using ChroniclesExporter.IO.Database;
+using ChroniclesExporter.Log;
 using ChroniclesExporter.Table;
 
 namespace ChroniclesExporter.Utility;
@@ -87,8 +89,8 @@ public static class MarkdownUtility
     {
         if (!pLine.TryTrimStart(pKey, out string? pStringValue) ||
             !T.TryParse(pStringValue, pStyles,
-                pFormat ?? System.Globalization.CultureInfo.InvariantCulture.NumberFormat, out T? result)) return false;
-
+                pFormat ?? System.Globalization.NumberFormatInfo.InvariantInfo, out T? result)) return false;
+        
         pOutput(result);
         return true;
     }
@@ -105,7 +107,7 @@ public static class MarkdownUtility
         where T : struct, Enum
     {
         if (!pLine.TryTrimStart(pKey, out string? pEnumString) ||
-            !Enum.TryParse(pEnumString?.Trim(), true, out T result)) return false;
+            !Enum.TryParse(Regex.Replace(pEnumString?.Trim() ?? string.Empty, @"[-_]", string.Empty), true, out T result)) return false;
 
         pOutput(result);
         return true;

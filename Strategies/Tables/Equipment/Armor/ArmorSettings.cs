@@ -9,7 +9,7 @@ public class ArmorSettings : ISettings<ArmorReader, ArmorWriter>
     public string FilePath => "Equipment/Armors";
     public string Url(IRow pData)
     {
-        return "/Armors?id={0}";
+        return "/armors?id={0}";
     }
 
     public string LinkIcon(IRow pData)

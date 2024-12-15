@@ -10,7 +10,7 @@ public class CreatureTypeSettings : ISettings<CreatureTypeReader, CreatureTypeWr
 
     public string Url(IRow pData)
     {
-        return "/CreatureTypes?id={0}";
+        return "/creature-types?id={0}";
     }
 
     public string LinkIcon(IRow pData)
