@@ -10,7 +10,7 @@
         <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
         <Version>0.4.0</Version>
         <AssemblyVersion Condition=" '$(Version)' == '' ">0.0.0.0</AssemblyVersion>
-        <AssemblyVersion Condition=" '$(Version)' != '' ">$(Version).0</AssemblyVersion>
+        <AssemblyVersion Condition=" '$(Version)' != '' ">0.1.0.0</AssemblyVersion>
         <InformationalVersion Condition=" '$(Configuration)' == 'Release' ">$(Version)</InformationalVersion>
         <InformationalVersion Condition=" '$(Configuration)' != 'Release' ">$(Version)-Preview</InformationalVersion>
         <Title>Chronicles Exporter</Title>
