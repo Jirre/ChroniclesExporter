@@ -27,4 +27,6 @@ public enum ETable
     CreatureTypes,
 
     #endregion
+    
+    Rules,
 }
